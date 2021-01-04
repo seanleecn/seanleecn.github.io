@@ -139,4 +139,4 @@ SEO优化的目的就是为了让搜索引擎能够找到我们的网站，以�
     hexo clean
     hexo g #在/public文件夹下面生成了sitemap.xml文件
     ```
-3. 前往[Google Search Console](https://search.google.com/search-console/about)填写域名，把选择HTML验证，并把验证内容填到`_config.next.yml`文件中(注意在menu选项中打开sitemap的注释)。
+3. 前往[Google Search Console](https://search.google.com/search-console/about)填写域名，把选择HTML验证，并把验证内容填到`_config.next.yml`文件中。
