@@ -9,6 +9,8 @@ categories: 学习笔记
 
 <!-- more -->
 
+> 开篇先推荐一下阮一峰整理的两份Git命令([资料1](https://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html)，[资料2](http://www.ruanyifeng.com/blog/2014/06/git_remote.html))，比我整理的好多了~
+
 # Git本地仓库命令
 
 ## 基本单分支操作
