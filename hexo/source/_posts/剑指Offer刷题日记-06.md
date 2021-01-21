@@ -1,6 +1,5 @@
 ---
 title: 剑指Offer刷题日记-06
-toc: true
 date: 2020-08-21 10:03:05
 tags: 
     - 剑指Offer

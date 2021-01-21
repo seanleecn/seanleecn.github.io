@@ -3,7 +3,6 @@ title: 剑指Offer刷题日记-03
 date: 2020-08-18 16:24:33
 tags: 剑指Offer
 categories: 数据结构与算法 
-toc: true
 ---
 
 【剑指Offer刷题日记】系列的第一篇文章，从面试题3开始！冲冲冲！

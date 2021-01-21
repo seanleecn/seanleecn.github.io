@@ -1,6 +1,5 @@
 ---
 title: Hello World
-toc: true
 date: 2020-04-19 16:33:54
 ---
 
@@ -16,4 +15,3 @@ date: 2020-04-19 16:33:54
 
 哈工大深圳校区机械工程在读。
 
-不介意的话可以看看我的[摄影](https://xiang-lee.gitee.io/album/)。
