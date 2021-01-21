@@ -38,7 +38,7 @@ ubuntu18.04 + nvidia 1080显卡，显卡驱动在**软件和更新**里面通过
 
   3. 安装cudnn
 
-     cudnn的[官网](https://developer.nvidia.com/rdp/cudnn-download)的下载界面标出来cuda和cudnn的对应关系，选择和cuda10.5对应的cudnn8.0.5下载，这里依旧不选择deb安装，下载tar压缩包，根据[官方文档](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html#installlinux-tar)安装。
+     cudnn的[官网](https://developer.nvidia.com/rdp/cudnn-download)的下载界面标出来cuda和cudnn的对应关系，选择和cuda10.2对应的cudnn8.0.5下载，这里依旧不选择deb安装，下载tar压缩包，根据[官方文档](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html#installlinux-tar)安装。
 
 4. 安装显卡驱动
 
@@ -48,4 +48,4 @@ ubuntu18.04 + nvidia 1080显卡，显卡驱动在**软件和更新**里面通过
 
 # 安装
 
-最后安装的时候还是要按照``driver->cuda->cudnn->pytorch``的顺序进行~
+最后安装的时候还是要按照``driver->cuda->cudnn->pytorch``的顺序进行~需要注意的是，安装cuda的时候把driver选项关闭，因为我们通过``软件和更新里面的附加硬件``安装了满足当前cuda依赖的驱动。

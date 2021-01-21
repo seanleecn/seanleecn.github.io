@@ -251,6 +251,6 @@ categories: 学习笔记
   ```
   # 排除所有.class文件:
   *.class
-  # 不排除.gitignore和App.class:
+  # 不排除.gitignore
   !.gitignore
   ```
