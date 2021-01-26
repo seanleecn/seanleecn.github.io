@@ -49,3 +49,54 @@ ubuntu18.04 + nvidia 1080显卡，显卡驱动在**软件和更新**里面通过
 # 安装
 
 最后安装的时候还是要按照``driver->cuda->cudnn->pytorch``的顺序进行~需要注意的是，安装cuda的时候把driver选项关闭，因为我们通过``软件和更新里面的附加硬件``安装了满足当前cuda依赖的驱动。
+
+# BUG修复
+
+在使用tar压缩包，且按照官网的教程安装cudnn之后，当遇到运行库的链接操作时，会出现下面的错误：
+
+> /sbin/ldconfig.real: /usr/local/cuda-10.2/targets/x86_64-linux/lib/libcudnn_ops_train.so.8 is not a symbolic link
+>
+> /sbin/ldconfig.real: /usr/local/cuda-10.2/targets/x86_64-linux/lib/libcudnn.so.8 is not a symbolic link
+>
+> ...
+
+原因是安装cudnn的cp命令，没有把软连接复制过去，而是把源文件复制了一份。
+在``/usr/local/cuda-10.2/targets/x86_64-linux/lib/``路径下通过``ls -l``显示软连接的真是路径可以找到原始指向文件，发现没有报错的库文件链接的顺序是``libxxx.so->libxxx.so.8->libxxx.8.0.5``，所以按照下面顺序恢复链接顺序。(报错的文件共7个)
+
+```bash
+#1
+sudo ln -sf libcudnn_adv_infer.so.8.0.5 libcudnn_adv_infer.so.8
+
+sudo ln -sf libcudnn_adv_infer.so.8 libcudnn_adv_infer.so
+
+#2
+sudo ln -sf libcudnn_adv_train.so.8.0.5 libcudnn_adv_train.so.8
+
+sudo ln -sf libcudnn_adv_train.so.8 libcudnn_adv_train.so
+
+#3
+sudo ln -sf libcudnn_cnn_infer.so.8.0.5 libcudnn_cnn_infer.so.8
+
+sudo ln -sf libcudnn_cnn_infer.so.8 libcudnn_cnn_infer.so
+
+#4
+sudo ln -sf libcudnn_cnn_train.so.8.0.5 libcudnn_cnn_train.so.8
+
+sudo ln -sf libcudnn_cnn_train.so.8 libcudnn_cnn_train.so
+
+#5
+sudo ln -sf libcudnn_ops_infer.so.8.0.5 libcudnn_ops_infer.so.8
+
+sudo ln -sf libcudnn_ops_infer.so.8 libcudnn_ops_infer.so
+
+#6
+sudo ln -sf libcudnn_ops_train.so.8.0.5 libcudnn_ops_train.so.8
+
+sudo ln -sf libcudnn_ops_train.so.8 libcudnn_ops_train.so
+
+#7
+sudo ln -sf libcudnn.so.8.0.5 libcudnn.so.8
+
+sudo ln -sf libcudnn.so.8 libcudnn.so
+```
+

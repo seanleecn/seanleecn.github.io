@@ -104,8 +104,7 @@ git clone git@github.com:seanleecn/seanleecn.github.io.git
 cd seanleecn.github.io
 git checkout src #切换到src分支
 cd hexo
-hexo init
-npm install
+npm install #安装node_modules部件
 ```
 
 > 简要说明一下，由于hexo默认生成了`.gitignore`文件，该文件会在备份源文件的过程中跳过`node_modules`和`.deploy_git`文件夹，也就是hexo的依赖包以及推送到main分支的文件都不会被备份。
