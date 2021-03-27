@@ -1,6 +1,6 @@
 ---
 title: 剑指Offer刷题日记-动态规划
-date: 2020-08-20 16:47:29
+date: 2020-08-21 16:47:29
 tags:    
     - 剑指Offer
     - 动态规划
@@ -236,7 +236,10 @@ int cuttingRope(int n)
     }
     return res * n % 1000000007;
 }
+```
 
+### 测试用例
+```c++
 int main(int argc, char **argv)
 {
     cout << cuttingRope(8) << endl;  //期望输出18

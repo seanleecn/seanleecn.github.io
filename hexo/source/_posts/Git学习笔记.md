@@ -5,7 +5,9 @@ tags: Git
 categories: 学习笔记
 ---
 
-> 作为一个面向Github科研的水笔研究生，日常依赖Github完成科研工作，熟练掌握``git clone``的一百种方法。实验室的师兄给我们搭了个GitLab多人同步开发，着实让我记不住命令...根据[廖雪峰的Git教程](https://www.liaoxuefeng.com/wiki/896043488029600)的整理一份个人的学习笔记
+作为一个面向Github科研的研究生，熟练掌握``git clone``的一百种方法。
+
+师兄搭了个GitLab进行多人同步开发，这里根据[廖雪峰的Git教程](https://www.liaoxuefeng.com/wiki/896043488029600)的整理一份个人的学习笔记
 
 <!-- more -->
 

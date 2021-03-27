@@ -1,6 +1,6 @@
 ---
 title: 剑指Offer刷题日记-位运算
-date: 2020-08-18 16:24:33
+date: 2020-08-23 16:24:33
 tags: 
     - 剑指Offer
     - 位运算
@@ -169,8 +169,8 @@ int singleNumber(vector<int> &nums)
 }
 ```
 
-### show me code
-```C++
+### 测试用例
+```c++
 int main()
 {
     vector<int> vec = {9, 1, 7, 9, 7, 9, 7};
@@ -212,8 +212,8 @@ int add(int a, int b)
 }
 ```
 
-### show me code
-```C++
+### 测试用例
+```c++
 int main()
 {
     cout << add(1, 2) << endl;

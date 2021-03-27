@@ -6,7 +6,9 @@ categories: 环境配置
 ---
 
 
-> 网上大部分的教程都是按照``driver->cuda->cudnn->pytorch``这个顺序安装的。这篇文章从pytorch开始，逆着分析怎么解决环境依赖。
+网上大部分的教程都是按照``driver->cuda->cudnn->pytorch``这一顺序进行环境配置的。
+
+这篇文章从最终目标出发，从pytorch逆向分析环境依赖。
 
 <!-- more -->
 

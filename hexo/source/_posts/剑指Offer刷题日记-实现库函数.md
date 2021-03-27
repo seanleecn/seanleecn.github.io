@@ -7,12 +7,11 @@ tags:
 categories: 数据结构与算法 
 ---
 
-记录[剑指Offer](https://leetcode-cn.com/problemset/lcof/)中``实现库函数``相关的题目## 思路及解答。
+记录[剑指Offer](https://leetcode-cn.com/problemset/lcof/)中``实现库函数``相关的题目思路及解答。
 
-文章会给出## 思路和代码，同时为了方便本地调试，还会提供相应的测试用例。
+文章会给出思路和代码，同时为了方便本地调试，还会提供相应的测试用例。
 
 <!-- more -->
-
 
 # 剑指Offer16：数值的整数次方  
 题目：实现函数double Power(double base, int exponent)，求base的exponent次方。

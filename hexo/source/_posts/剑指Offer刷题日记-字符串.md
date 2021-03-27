@@ -1,8 +1,8 @@
 ---
 title: 剑指Offer刷题日记-数组
-date: 2020-08-18 16:24:33
+date: 2020-08-30 16:24:33
 tags: 
-    - # 剑指Offer
+    - 剑指Offer
     - 字符串
 categories: 数据结构与算法 
 ---

@@ -1,13 +1,13 @@
 ---
 title: 剑指Offer刷题日记-数组
-date: 2020-08-18 16:24:33
+date: 2020-08-16 16:24:33
 tags: 
     - 剑指Offer
     - 数组
 categories: 数据结构与算法 
 ---
 
-【剑指Offer刷题日记】系列的第一篇文章，从面试题3开始！冲冲冲！
+【剑指Offer刷题日记】的第一篇文章，从数组相关的面试题3开始！冲冲冲！
 
 记录[剑指Offer](https://leetcode-cn.com/problemset/lcof/)中``数组``相关的题目思路及解答。
 
@@ -682,6 +682,7 @@ int findNthDigit(int n)
     return int(s_finalNum[digitRes] - '0');
 }
 ```
+
 ### 测试用例
 ```C++
 int main(int argc, char **agrv)
@@ -1022,8 +1023,8 @@ vector<int> constructArr(vector<int> &a)
 }
 ```
 
-### show me code
-```C++
+### 测试用例
+```c++
 int main()
 {
     vector<int> in = {1, 2, 3, 4, 5};
