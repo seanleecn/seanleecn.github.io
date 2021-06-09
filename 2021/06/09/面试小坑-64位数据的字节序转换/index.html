@@ -24,25 +24,21 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"seanleecn.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
-<meta name="description" content="网上大部分的教程都是按照driver-&gt;cuda-&gt;cudnn-&gt;pytorch这一顺序进行环境配置的。 这篇文章从最终目标出发，从pytorch逆向分析环境依赖。">
+<meta name="description" content="上周面试TME，面试官叫我说一下怎么实现64位数据的字节序转换，当时没意识到他的考察点，就回答系统有hton等一系列函数实现大端序和小端序的转换，没注意到考察点在于64位数据。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Ubuntu18配置Pytorch环境">
-<meta property="og:url" content="https://seanleecn.github.io/2021/01/05/Ubuntu18%E9%85%8D%E7%BD%AEPytorch%E7%8E%AF%E5%A2%83/index.html">
+<meta property="og:title" content="面试小坑-64位数据的字节序转换">
+<meta property="og:url" content="https://seanleecn.github.io/2021/06/09/%E9%9D%A2%E8%AF%95%E5%B0%8F%E5%9D%91-64%E4%BD%8D%E6%95%B0%E6%8D%AE%E7%9A%84%E5%AD%97%E8%8A%82%E5%BA%8F%E8%BD%AC%E6%8D%A2/index.html">
 <meta property="og:site_name" content="Sean&#39;s blog">
-<meta property="og:description" content="网上大部分的教程都是按照driver-&gt;cuda-&gt;cudnn-&gt;pytorch这一顺序进行环境配置的。 这篇文章从最终目标出发，从pytorch逆向分析环境依赖。">
+<meta property="og:description" content="上周面试TME，面试官叫我说一下怎么实现64位数据的字节序转换，当时没意识到他的考察点，就回答系统有hton等一系列函数实现大端序和小端序的转换，没注意到考察点在于64位数据。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://seanleecn.github.io/2021/01/05/Ubuntu18%E9%85%8D%E7%BD%AEPytorch%E7%8E%AF%E5%A2%83/image-20210105202828030.png">
-<meta property="og:image" content="https://seanleecn.github.io/2021/01/05/Ubuntu18%E9%85%8D%E7%BD%AEPytorch%E7%8E%AF%E5%A2%83/image-20210105203917080.png">
-<meta property="og:image" content="https://seanleecn.github.io/2021/01/05/Ubuntu18%E9%85%8D%E7%BD%AEPytorch%E7%8E%AF%E5%A2%83/image-20210105204626321.png">
-<meta property="article:published_time" content="2021-01-05T12:14:35.000Z">
-<meta property="article:modified_time" content="2021-06-09T03:21:55.865Z">
+<meta property="article:published_time" content="2021-06-09T04:13:24.000Z">
+<meta property="article:modified_time" content="2021-06-09T04:36:11.953Z">
 <meta property="article:author" content="Sean Lee">
-<meta property="article:tag" content="Pytorch">
+<meta property="article:tag" content="字节序转换">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://seanleecn.github.io/2021/01/05/Ubuntu18%E9%85%8D%E7%BD%AEPytorch%E7%8E%AF%E5%A2%83/image-20210105202828030.png">
 
 
-<link rel="canonical" href="https://seanleecn.github.io/2021/01/05/Ubuntu18%E9%85%8D%E7%BD%AEPytorch%E7%8E%AF%E5%A2%83/">
+<link rel="canonical" href="https://seanleecn.github.io/2021/06/09/%E9%9D%A2%E8%AF%95%E5%B0%8F%E5%9D%91-64%E4%BD%8D%E6%95%B0%E6%8D%AE%E7%9A%84%E5%AD%97%E8%8A%82%E5%BA%8F%E8%BD%AC%E6%8D%A2/">
 
 
 <script class="page-configurations">
@@ -54,7 +50,7 @@
     lang   : 'zh-CN'
   };
 </script>
-<title>Ubuntu18配置Pytorch环境 | Sean's blog</title>
+<title>面试小坑-64位数据的字节序转换 | Sean's blog</title>
   
 
 
@@ -180,7 +176,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -193,7 +189,6 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">环境说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">分析流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">3.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BUG%E4%BF%AE%E5%A4%8D"><span class="nav-number">4.</span> <span class="nav-text">BUG修复</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -273,7 +268,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://seanleecn.github.io/2021/01/05/Ubuntu18%E9%85%8D%E7%BD%AEPytorch%E7%8E%AF%E5%A2%83/">
+    <link itemprop="mainEntityOfPage" href="https://seanleecn.github.io/2021/06/09/%E9%9D%A2%E8%AF%95%E5%B0%8F%E5%9D%91-64%E4%BD%8D%E6%95%B0%E6%8D%AE%E7%9A%84%E5%AD%97%E8%8A%82%E5%BA%8F%E8%BD%AC%E6%8D%A2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/uploads/lx-avatar.jpg">
@@ -286,7 +281,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Ubuntu18配置Pytorch环境
+          面试小坑-64位数据的字节序转换
         </h1>
 
         <div class="post-meta-container">
@@ -296,23 +291,17 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2021-01-05 20:14:35" itemprop="dateCreated datePublished" datetime="2021-01-05T20:14:35+08:00">2021-01-05</time>
+      <time title="创建时间：2021-06-09 12:13:24 / 修改时间：12:36:11" itemprop="dateCreated datePublished" datetime="2021-06-09T12:13:24+08:00">2021-06-09</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-06-09 11:21:55" itemprop="dateModified" datetime="2021-06-09T11:21:55+08:00">2021-06-09</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" itemprop="url" rel="index"><span itemprop="name">环境配置</span></a>
+          <a href="/categories/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">网络编程</span></a>
         </span>
     </span>
 
@@ -326,50 +315,23 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>网上大部分的教程都是按照<code>driver-&gt;cuda-&gt;cudnn-&gt;pytorch</code>这一顺序进行环境配置的。</p>
-<p>这篇文章从最终目标出发，从pytorch逆向分析环境依赖。</p>
+        <p>上周面试TME，面试官叫我说一下怎么实现64位数据的字节序转换，当时没意识到他的考察点，就回答系统有<code>hton</code>等一系列函数实现大端序和小端序的转换，没注意到考察点在于<strong>64位数据</strong>。</p>
 <a id="more"></a>
 
-<h1 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h1><p>ubuntu18.04 + nvidia 1080显卡，显卡驱动在<strong>软件和更新</strong>里面通过附件驱动安装。</p>
-<h1 id="分析流程"><a href="#分析流程" class="headerlink" title="分析流程"></a>分析流程</h1><p>配置环境主要是每个环境的依赖要搞明白，一般是向下兼容的，下面说一下自己的思路。</p>
-<ol>
-<li><p>打开<a target="_blank" rel="noopener" href="https://pytorch.org/">pytorch官网</a>，选择一个自己想要的版本</p>
-<img src="/2021/01/05/Ubuntu18%E9%85%8D%E7%BD%AEPytorch%E7%8E%AF%E5%A2%83/image-20210105202828030.png" class="" title="image-20210105202828030">
-
-<p>我这里选择了倒数第二个支持GPU的版本，这里告诉我们<strong>需要CUDA10.2</strong>。</p>
-</li>
-<li><p>安装cuda</p>
+<p>网络编程中，只要<code>include &lt;arpa/inet.h&gt;</code>，便可以使用下面几个函数实现主机字节序（大部分CPU都是小端序）和网络字节序（大端序）的转换</p>
 <ul>
-<li><p>打开<a target="_blank" rel="noopener" href="https://developer.nvidia.com/zh-cn/cuda-downloads">cuda官网</a>，找到自己需要的10.2版本。</p>
-</li>
-<li><p>选择runfile离线安装（不选择deb离线安装是因为deb安装会产生一堆文件在/var路径下，本洁癖还不知敢不敢删除）</p>
-</li>
-<li><p>观察下载文件的名字，以10.2的cuda为例子</p>
-<img src="/2021/01/05/Ubuntu18%E9%85%8D%E7%BD%AEPytorch%E7%8E%AF%E5%A2%83/image-20210105203917080.png" class="" title="image-20210105203917080">
-
-<p>标出来的就是10.2版本的CUDA最低需要的驱动版本号，也就是<strong>440.33</strong>。</p>
-</li>
+<li>htons </li>
+<li>htonl</li>
+<li>ntohs</li>
+<li>ntohl</li>
 </ul>
-</li>
-<li><p>安装cudnn</p>
-<p>cudnn的<a target="_blank" rel="noopener" href="https://developer.nvidia.com/rdp/cudnn-download">官网</a>的下载界面标出来cuda和cudnn的对应关系，选择和cuda10.2对应的cudnn8.0.5下载，这里依旧不选择deb安装，下载tar压缩包，根据<a target="_blank" rel="noopener" href="https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html#installlinux-tar">官方文档</a>安装。</p>
-</li>
-<li><p>安装显卡驱动</p>
-<p>打开软件和更新里面的附加硬件，选择一个版本号<strong>大于</strong>440.33的metapackage安装</p>
-<img src="/2021/01/05/Ubuntu18%E9%85%8D%E7%BD%AEPytorch%E7%8E%AF%E5%A2%83/image-20210105204626321.png" class="" title="image-20210105204626321">
-
-</li>
-</ol>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>最后安装的时候还是要按照<code>driver-&gt;cuda-&gt;cudnn-&gt;pytorch</code>的顺序进行~需要注意的是，安装cuda的时候把driver选项关闭，因为我们通过<code>软件和更新里面的附加硬件</code>安装了满足当前cuda依赖的驱动。</p>
-<h1 id="BUG修复"><a href="#BUG修复" class="headerlink" title="BUG修复"></a>BUG修复</h1><p>在使用tar压缩包，且按照官网的教程安装cudnn之后，当遇到运行库的链接操作时，会出现下面的错误：</p>
-<blockquote>
-<p>/sbin/ldconfig.real: /usr/local/cuda-10.2/targets/x86_64-linux/lib/libcudnn_ops_train.so.8 is not a symbolic link</p>
-<p>/sbin/ldconfig.real: /usr/local/cuda-10.2/targets/x86_64-linux/lib/libcudnn.so.8 is not a symbolic link</p>
-<p>…</p>
-</blockquote>
-<p>原因是安装cudnn的cp命令，没有把软连接复制过去，而是把源文件复制了一份。<br>在<code>/usr/local/cuda-10.2/targets/x86_64-linux/lib/</code>路径下通过<code>ls -l</code>显示软连接的真是路径可以找到原始指向文件，发现没有报错的库文件链接的顺序是<code>libxxx.so-&gt;libxxx.so.8-&gt;libxxx.8.0.5</code>，所以按照下面顺序恢复链接顺序。(报错的文件共7个)</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1</span></span><br><span class="line">sudo ln -sf libcudnn_adv_infer.so.8.0.5 libcudnn_adv_infer.so.8</span><br><span class="line"></span><br><span class="line">sudo ln -sf libcudnn_adv_infer.so.8 libcudnn_adv_infer.so</span><br><span class="line"></span><br><span class="line"><span class="comment">#2</span></span><br><span class="line">sudo ln -sf libcudnn_adv_train.so.8.0.5 libcudnn_adv_train.so.8</span><br><span class="line"></span><br><span class="line">sudo ln -sf libcudnn_adv_train.so.8 libcudnn_adv_train.so</span><br><span class="line"></span><br><span class="line"><span class="comment">#3</span></span><br><span class="line">sudo ln -sf libcudnn_cnn_infer.so.8.0.5 libcudnn_cnn_infer.so.8</span><br><span class="line"></span><br><span class="line">sudo ln -sf libcudnn_cnn_infer.so.8 libcudnn_cnn_infer.so</span><br><span class="line"></span><br><span class="line"><span class="comment">#4</span></span><br><span class="line">sudo ln -sf libcudnn_cnn_train.so.8.0.5 libcudnn_cnn_train.so.8</span><br><span class="line"></span><br><span class="line">sudo ln -sf libcudnn_cnn_train.so.8 libcudnn_cnn_train.so</span><br><span class="line"></span><br><span class="line"><span class="comment">#5</span></span><br><span class="line">sudo ln -sf libcudnn_ops_infer.so.8.0.5 libcudnn_ops_infer.so.8</span><br><span class="line"></span><br><span class="line">sudo ln -sf libcudnn_ops_infer.so.8 libcudnn_ops_infer.so</span><br><span class="line"></span><br><span class="line"><span class="comment">#6</span></span><br><span class="line">sudo ln -sf libcudnn_ops_train.so.8.0.5 libcudnn_ops_train.so.8</span><br><span class="line"></span><br><span class="line">sudo ln -sf libcudnn_ops_train.so.8 libcudnn_ops_train.so</span><br><span class="line"></span><br><span class="line"><span class="comment">#7</span></span><br><span class="line">sudo ln -sf libcudnn.so.8.0.5 libcudnn.so.8</span><br><span class="line"></span><br><span class="line">sudo ln -sf libcudnn.so.8 libcudnn.so</span><br></pre></td></tr></table></figure>
-
+<p>其中<code>h</code>表示<code>host</code>，<code>n</code>代表<code>net</code>，<code>s</code>表示<code>short</code>，<code>l</code>表示<code>long</code>。</p>
+<p>也就是说最多支持32位的数据转换。</p>
+<p>因为在网络编程中，网络数据的传输涉及到的字节序转换是<strong>自动</strong>的，上面这几个函数一般只会在向<code>sockaddr_in</code>结构体填充数据的时候用的上,比如端口号用<code>htons</code>函数，ip地址用<code>htonl</code>函数。</p>
+<p>因此对于64位数据，可以使用位移的方法实现转换，下面给出<code>htonl_64</code>的测试。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式一：自己实现</span></span><br><span class="line"><span class="function"><span class="keyword">uint32_t</span> <span class="title">reversebytes_32</span><span class="params">(<span class="keyword">uint32_t</span> value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (value &amp; <span class="number">0x000000FF</span>U) &lt;&lt; <span class="number">24</span> | (value &amp; <span class="number">0x0000FF00</span>U) &lt;&lt; <span class="number">8</span> |</span><br><span class="line">           (value &amp; <span class="number">0x00FF0000</span>U) &gt;&gt; <span class="number">8</span> | (value &amp; <span class="number">0xFF000000</span>U) &gt;&gt; <span class="number">24</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">uint64_t</span> <span class="title">reversebytes_64</span><span class="params">(<span class="keyword">uint64_t</span> value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 低32位转成小端</span></span><br><span class="line">    <span class="keyword">uint64_t</span> high_uint64 = <span class="keyword">uint64_t</span>(reversebytes_32(<span class="keyword">uint32_t</span>(value)));</span><br><span class="line">    <span class="comment">// 高32位转成小端</span></span><br><span class="line">    <span class="keyword">uint64_t</span> low_uint64 = (<span class="keyword">uint64_t</span>)reversebytes_32(<span class="keyword">uint32_t</span>(value &gt;&gt; <span class="number">32</span>));</span><br><span class="line">    <span class="keyword">return</span> (high_uint64 &lt;&lt; <span class="number">32</span>) + low_uint64;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式二：利用了系统的函数</span></span><br><span class="line"><span class="function"><span class="keyword">uint64_t</span> <span class="title">htonl_64</span><span class="params">(<span class="keyword">uint64_t</span> in)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ((<span class="keyword">uint64_t</span>)htonl((in)&amp;<span class="number">0xFFFFFFFF</span>) &lt;&lt; <span class="number">32</span>) | htonl((in) &gt;&gt; <span class="number">32</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;32位:&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">uint32_t</span> x = <span class="number">0x87654321</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;方式一: &quot;</span> &lt;&lt; hex &lt;&lt; htonl(x) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;方式二: &quot;</span> &lt;&lt; hex &lt;&lt; reversebytes_32(x) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;-------&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;64位:&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">uint64_t</span> y = <span class="number">0x1234567887654321</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;方式一: &quot;</span> &lt;&lt; hex &lt;&lt; htonl_64(y) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;方式二: &quot;</span> &lt;&lt; hex &lt;&lt; reversebytes_64(y) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">32位:</span><br><span class="line">方式一: 21436587</span><br><span class="line">方式二: 21436587</span><br><span class="line">-------</span><br><span class="line">64位:</span><br><span class="line">方式一: 2143658778563412</span><br><span class="line">方式二: 2143658778563412</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -404,7 +366,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://seanleecn.github.io/2021/01/05/Ubuntu18%E9%85%8D%E7%BD%AEPytorch%E7%8E%AF%E5%A2%83/" title="Ubuntu18配置Pytorch环境">https://seanleecn.github.io/2021/01/05/Ubuntu18配置Pytorch环境/</a>
+      <a href="https://seanleecn.github.io/2021/06/09/%E9%9D%A2%E8%AF%95%E5%B0%8F%E5%9D%91-64%E4%BD%8D%E6%95%B0%E6%8D%AE%E7%9A%84%E5%AD%97%E8%8A%82%E5%BA%8F%E8%BD%AC%E6%8D%A2/" title="面试小坑-64位数据的字节序转换">https://seanleecn.github.io/2021/06/09/面试小坑-64位数据的字节序转换/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -413,21 +375,18 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/Pytorch/" rel="tag"><i class="fa fa-tag"></i> Pytorch</a>
+              <a href="/tags/%E5%AD%97%E8%8A%82%E5%BA%8F%E8%BD%AC%E6%8D%A2/" rel="tag"><i class="fa fa-tag"></i> 字节序转换</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2020/08/30/%E5%89%91%E6%8C%87Offer%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0-%E5%AD%97%E7%AC%A6%E4%B8%B2/" rel="prev" title="剑指Offer刷题日记-数组">
-                  <i class="fa fa-chevron-left"></i> 剑指Offer刷题日记-数组
+                <a href="/2021/01/21/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="prev" title="Git学习笔记">
+                  <i class="fa fa-chevron-left"></i> Git学习笔记
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2021/01/11/%E8%AE%B0%E4%B8%80%E6%AC%A1Samba%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8D%87%E7%BA%A7%E7%BB%B4%E6%8A%A4/" rel="next" title="记一次samba服务器漏洞升级维护">
-                  记一次samba服务器漏洞升级维护 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
