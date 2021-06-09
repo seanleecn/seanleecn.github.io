@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/uploads/apple-touch-icon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon.png">
+  <link rel="mask-icon" href="/uploads/favicon.png" color="#222">
+  <meta name="google-site-verification" content="BMs_JXcFpPIC8YPHZk1ZxmbaZaMS_Gfpf5R2FHhk9tU">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic%7CRoboto+Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"seanleecn.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="实验室服务器太久没维护，samba的一个漏洞被机房封IP了，记录一下修复的过程。 服务器系统为CentOS 7.8，是实验室的文件存储中心。修复的难度主要来源于每行代码要检查N遍才敢回车，生怕自己不小心删库，然后快进到退学提桶跑路。  后续：机房禁止samba服务，改用FTP了。。。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次samba服务器漏洞升级维护">
+<meta property="og:url" content="https://seanleecn.github.io/2021/01/11/%E8%AE%B0%E4%B8%80%E6%AC%A1Samba%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8D%87%E7%BA%A7%E7%BB%B4%E6%8A%A4/index.html">
+<meta property="og:site_name" content="Sean&#39;s blog">
+<meta property="og:description" content="实验室服务器太久没维护，samba的一个漏洞被机房封IP了，记录一下修复的过程。 服务器系统为CentOS 7.8，是实验室的文件存储中心。修复的难度主要来源于每行代码要检查N遍才敢回车，生怕自己不小心删库，然后快进到退学提桶跑路。  后续：机房禁止samba服务，改用FTP了。。。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-11T12:00:35.000Z">
+<meta property="article:modified_time" content="2021-06-09T03:21:55.865Z">
+<meta property="article:author" content="Sean Lee">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://seanleecn.github.io/2021/01/11/%E8%AE%B0%E4%B8%80%E6%AC%A1Samba%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8D%87%E7%BA%A7%E7%BB%B4%E6%8A%A4/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>记一次samba服务器漏洞升级维护 | Sean's blog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Sean's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">This is part of my life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E5%AE%89%E8%A3%85%E7%9A%84Samba%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%89%88%E6%9C%AC"><span class="nav-number">1.</span> <span class="nav-text">查看当前安装的Samba服务器版本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Byum%E6%BA%90%E9%87%8C%E9%9D%A2%E7%9A%84Samba%E7%89%88%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">查看yum源里面的Samba版本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%87%E4%BB%BDSamba%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">3.</span> <span class="nav-text">备份Samba的信息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%87%E4%BB%BDsamba%E5%AD%98%E7%9A%84%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-number">3.1.</span> <span class="nav-text">备份samba存的的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%87%E4%BB%BDSamba%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">备份Samba配置文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91"><span class="nav-number">4.</span> <span class="nav-text">源码编译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%B0%E7%9A%84Samba%EF%BC%8C%E5%85%B3%E6%8E%89%E6%97%A7%E7%9A%84"><span class="nav-number">5.</span> <span class="nav-text">配置新的Samba，关掉旧的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8E%E7%BB%AD"><span class="nav-number">6.</span> <span class="nav-text">后续</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Sean Lee"
+      src="/uploads/lx-avatar.jpg">
+  <p class="site-author-name" itemprop="name">Sean Lee</p>
+  <div class="site-description" itemprop="description">Coding & Robotics</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/seanleecn" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;seanleecn" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:lix0419@outlook.com" title="E-Mail → mailto:lix0419@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://seanleecn.github.io/2021/01/11/%E8%AE%B0%E4%B8%80%E6%AC%A1Samba%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8D%87%E7%BA%A7%E7%BB%B4%E6%8A%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/lx-avatar.jpg">
+      <meta itemprop="name" content="Sean Lee">
+      <meta itemprop="description" content="Coding & Robotics">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sean's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记一次samba服务器漏洞升级维护
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-01-11 20:00:35" itemprop="dateCreated datePublished" datetime="2021-01-11T20:00:35+08:00">2021-01-11</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-06-09 11:21:55" itemprop="dateModified" datetime="2021-06-09T11:21:55+08:00">2021-06-09</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" itemprop="url" rel="index"><span itemprop="name">环境配置</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>实验室服务器太久没维护，samba的一个漏洞被机房封IP了，记录一下修复的过程。</p>
+<p>服务器系统为CentOS 7.8，是实验室的文件存储中心。修复的难度主要来源于每行代码要检查N遍才敢回车，生怕自己不小心删库，然后快进到退学提桶跑路。</p>
+<blockquote>
+<p>后续：机房禁止samba服务，改用FTP了。。。</p>
+</blockquote>
+<a id="more"></a>
+
+<h2 id="查看当前安装的Samba服务器版本"><a href="#查看当前安装的Samba服务器版本" class="headerlink" title="查看当前安装的Samba服务器版本"></a>查看当前安装的Samba服务器版本</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">smbstatus</span><br></pre></td></tr></table></figure>
+<p>当前是4.10.13</p>
+<h2 id="查看yum源里面的Samba版本"><a href="#查看yum源里面的Samba版本" class="headerlink" title="查看yum源里面的Samba版本"></a>查看yum源里面的Samba版本</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum list | grep samba</span><br><span class="line"><span class="comment"># 输出 samba.x86_64                                3:4.10.13-1.el7            @copr:copr.fedorainfracloud.org:sergiomb:SambaAD</span></span><br></pre></td></tr></table></figure>
+<p>发现yum上面的版本和本地一样,应该是不能yum update samba了。。。只能源码安装</p>
+<h2 id="备份Samba的信息"><a href="#备份Samba的信息" class="headerlink" title="备份Samba的信息"></a>备份Samba的信息</h2><h3 id="备份samba存的的数据"><a href="#备份samba存的的数据" class="headerlink" title="备份samba存的的数据"></a>备份samba存的的数据</h3><ul>
+<li><p>看一下smb文件夹有多大，目前是560多G</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home</span><br><span class="line">du -h --max-depth=1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>看下当前系统还够不够放,发现/home目录下面18T的空间可用，所以就tar备份在这里</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df -h</span><br></pre></td></tr></table></figure></li>
+<li><p>备份/home/smb文件夹</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir smb_backup </span><br><span class="line"><span class="built_in">cd</span> smb_backup</span><br><span class="line">tar -jpcv -f 20200107_smb_backup.tar.bz2 /home/smb/</span><br></pre></td></tr></table></figure>
+<p>上面的命令解释：-j为采用bzip2压缩; -p为保持文件权限; -c创建压缩; -v可视化压缩过程; -f后面跟着压缩文件的命令，也就是把/home/smb/文件夹压缩打包到20200107_smb_backup.tar.bz2这个文件</p>
+<blockquote>
+<p>注意：本次备份没有加-j参数，也就是不压缩只打包，因为-j太慢了。。。反正现在空间还很多</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="备份Samba配置文件"><a href="#备份Samba配置文件" class="headerlink" title="备份Samba配置文件"></a>备份Samba配置文件</h3><ul>
+<li><p>先查看当前状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service smb status </span><br><span class="line"><span class="comment"># 显示 Active: active (running)</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>停止服务 </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">service smb stop</span><br><span class="line">service smb status </span><br><span class="line"><span class="comment"># 显示 Active: inactive (dead)</span></span><br></pre></td></tr></table></figure></li>
+<li><p>备份</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">smbd -b | grep DIR</span><br><span class="line"><span class="comment"># 输出 PRIVATE_DIR: /var/lib/samba/private</span></span><br><span class="line">cp /var/lib/samba/private /home/smb_backup/20200107 <span class="comment">#samba数据库</span></span><br><span class="line">cp /etc/samba/smb.conf /home/smb_backup/20200107 <span class="comment">#samba主要配置文件</span></span><br></pre></td></tr></table></figure>
+<h2 id="源码编译"><a href="#源码编译" class="headerlink" title="源码编译"></a>源码编译</h2></li>
+</ul>
+<blockquote>
+<p>参考<a target="_blank" rel="noopener" href="https://wiki.samba.org/index.php/Build_Samba_from_Source">官网文档</a>和官网<a target="_blank" rel="noopener" href="https://wiki.samba.org/index.php/Package_Dependencies_Required_to_Build_Samba#Red_Hat_Enterprise_Linux_7_.2F_CentOS_7_.2F_Scientific_Linux_7">依赖说明</a></p>
+</blockquote>
+<ul>
+<li><p>下载最新的官网stable源码（截止20210107）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://download.samba.org/pub/samba/stable/samba-4.13.3.tar.gz</span><br><span class="line">tar -zxf samba-4.13.3.tar.gz</span><br></pre></td></tr></table></figure></li>
+<li><p>安装依赖</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">yum install attr bind-utils docbook-style-xsl gcc gdb krb5-workstation \</span><br><span class="line">       libsemanage-python libxslt perl perl-ExtUtils-MakeMaker \</span><br><span class="line">       perl-Parse-Yapp perl-Test-Base pkgconfig policycoreutils-python \</span><br><span class="line">       python2-crypto gnutls-devel libattr-devel keyutils-libs-devel \</span><br><span class="line">       libacl-devel libaio-devel libblkid-devel libxml2-devel openldap-devel \</span><br><span class="line">       pam-devel popt-devel python-devel readline-devel zlib-devel systemd-devel \</span><br><span class="line">       lmdb-devel jansson-devel gpgme-devel pygpgme libarchive-devel</span><br></pre></td></tr></table></figure>
+<p>不出所料这样是失败的。。。错误信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Transaction check error:</span><br><span class="line">  file &#x2F;usr&#x2F;lib64&#x2F;libgnutlsxx.so.28.1.0 from install of gnutls-c++-3.3.29-9.el7_6.x86_64 conflicts with file from package compat-gnutls34-c++-3.4.17-6.el7.x86_64</span><br><span class="line">  file &#x2F;usr&#x2F;lib64&#x2F;libhogweed.so from install of nettle-devel-2.7.1-8.el7.x86_64 conflicts with file from package compat-nettle32-devel-3.2-3.el7.x86_64</span><br><span class="line">  file &#x2F;usr&#x2F;lib64&#x2F;libnettle.so from install of nettle-devel-2.7.1-8.el7.x86_64 conflicts with file from package compat-nettle32-devel-3.2-3.el7.x86_64</span><br><span class="line">  file &#x2F;usr&#x2F;lib64&#x2F;libgnutls-dane.so.0 from install of gnutls-dane-3.3.29-9.el7_6.x86_64 conflicts with file from package compat-gnutls34-dane-3.4.17-6.el7.x86_64</span><br><span class="line">  file &#x2F;usr&#x2F;lib64&#x2F;libgnutls-dane.so from install of gnutls-devel-3.3.29-9.el7_6.x86_64 conflicts with file from package compat-gnutls34-devel-3.4.17-6.el7.x86_64</span><br><span class="line">  file &#x2F;usr&#x2F;lib64&#x2F;libgnutls.so from install of gnutls-devel-3.3.29-9.el7_6.x86_64 conflicts with file from package compat-gnutls34-devel-3.4.17-6.el7.x86_64</span><br></pre></td></tr></table></figure>
+<p>官网表示，红帽系列发行版7系列都没有满足的gnutls包</p>
+<blockquote>
+<p>Red Hat Enterprise Linux 7 and deritivites do not provide a GnuTLS version &gt;= 3.4.7, even when EPEL is used. Users building Samba 4.12 will need to obtain GnuTLS from outside RHEL7 / CentOS7 / EPEL to use Samba 4.12.</p>
+</blockquote>
+<p>所以第三方安装<code>gnutls</code>这个包</p>
+</li>
+<li><p>安装<code>gnutls</code></p>
+<blockquote>
+<p>目前官网最新的是3.6.15这个包，经过测试编译不通过，应该是和openssl版本有关系（当前为OpenSSL 1.1.1g），每次编译到src文件夹下面的时候就会报找不到openssl的某个函数的错误，因此用老版本的<strong>3.6.4</strong>，切记！</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir 3rdpary</span><br><span class="line"><span class="built_in">cd</span> 3rdparty</span><br><span class="line">wget https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/gnutls-3.6.4.tar.xz</span><br><span class="line">tar -xvJf gnutls-3.6.4.tar.xz</span><br><span class="line">./configure  --without-p11-kit </span><br></pre></td></tr></table></figure>
+<p>然后又出错了。。。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">configure: error: </span><br><span class="line">  ***</span><br><span class="line">  *** Libnettle 3.4.1 was not found.</span><br></pre></td></tr></table></figure></li>
+<li><p>安装<code>Libnettle 3.4.1</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget https://ftp.gnu.org/gnu/nettle/nettle-3.4.1.tar.gz</span><br><span class="line">tar -zxf nettle-3.4.1.tar.gz</span><br><span class="line">./configure</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<p>make的时候又出错。。。我TM。。。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">rsa-sign-tr.c: 在函数‘sec_equal’中:</span><br><span class="line">rsa-sign-tr.c:243:3: 错误：只允许在 C99 模式下使用‘for’循环初始化声明</span><br><span class="line">   for (size_t i &#x3D; 0; i &lt; limbs; i++)</span><br><span class="line">   ^</span><br><span class="line">rsa-sign-tr.c:243:3: 附注：使用 -std&#x3D;c99 或 -std&#x3D;gnu99 来编译您的代码</span><br><span class="line">make[1]: *** [rsa-sign-tr.o] 错误 1</span><br><span class="line">make[1]: 离开目录“&#x2F;home&#x2F;smb_backup&#x2F;samba_src&#x2F;3rdparty&#x2F;nettle-3.4.1”</span><br><span class="line">make: *** [all] 错误 2</span><br></pre></td></tr></table></figure>
+<p>大概意思是make有问题</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">./configure --disable-openssl --prefix=/usr/ </span><br><span class="line"><span class="comment">#上面两个追加参数很关键</span></span><br><span class="line"><span class="comment">#disable-openssl解决不编译到example文件夹的时候找不到openssl，直接跳过拉倒</span></span><br><span class="line"><span class="comment">#prefix解决后续找不到库的问题，默认安装是装在/usr/local/lib64下面，系统在/usr/lib64找</span></span><br><span class="line">vim config.make</span><br><span class="line"><span class="comment"># 在CFLAGS一行后面加上-std=c99</span></span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+<p>libnettle<strong>安装好了</strong></p>
+</li>
+<li><p>继续安装<code>gnutls</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">./configure  --without-p11-kit </span><br><span class="line"><span class="comment"># 还是失败</span></span><br><span class="line">  configure: error: </span><br><span class="line">    ***</span><br><span class="line">    *** Libunistring was not found. To use the included one, use --with-included-unistring</span><br><span class="line"><span class="comment">#安装Libunistring</span></span><br><span class="line">yum install libunistring-devel</span><br><span class="line">./configure  --without-p11-kit</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p><strong>成功</strong>安装gnults</p>
+</li>
+<li><p>安装samba</p>
+<p>即使安装了gnults，因为安装路径不在/usr/lib64，系统找不到，这里懒得重新编译安装了。。。直接软连接过去</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ln -s /usr/<span class="built_in">local</span>/lib/pkgconfig/gnutls.pc /usr/lib64/pkgconfig/gnutls.pc</span><br><span class="line"><span class="comment"># ln -sf会覆盖，先备份一下原来的</span></span><br><span class="line">cp /usr/lib64/libgnutls.so /usr/lib64/libgnutls.so.bak</span><br><span class="line">ln -sf /usr/<span class="built_in">local</span>/lib/libgnutls.so /usr/lib64/libgnutls.so</span><br><span class="line">cp /usr/lib64/libgnutls.so.30 /usr/lib64/libgnutls.so.30.bak</span><br><span class="line">ln -sf /usr/<span class="built_in">local</span>/lib/libgnutls.so.30 /usr/lib64/libgnutls.so.30</span><br></pre></td></tr></table></figure>
+<p>再尝试编译</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">./configure --disable-python --without-ad-dc --without-json --without-libarchive  --without-acl-support </span><br><span class="line">make</span><br><span class="line"><span class="comment"># 输出 &#x27;build&#x27; finished successfully (12m15.538s)</span></span><br><span class="line">make install </span><br><span class="line"><span class="comment"># 输出 &#x27;install&#x27; finished successfully (3m9.860s)</span></span><br></pre></td></tr></table></figure>
+<p>！！！<strong>成功了</strong></p>
+<p>现在samba安装在/usr/local/samba文件夹下面</p>
+</li>
+</ul>
+<h2 id="配置新的Samba，关掉旧的"><a href="#配置新的Samba，关掉旧的" class="headerlink" title="配置新的Samba，关掉旧的"></a>配置新的Samba，关掉旧的</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ln -s /usr/<span class="built_in">local</span>/samba/etc/smb.conf /usr/<span class="built_in">local</span>/samba/lib/smb.conf</span><br><span class="line">touch /etc/ld.so.conf.d/samba.conf</span><br><span class="line">vim /etc/ld.so.conf.d/samba.conf</span><br><span class="line"><span class="comment"># 添加/usr/local/samba/lib</span></span><br><span class="line">ldconfig</span><br><span class="line">touch /etc/profile.d/samba.sh</span><br><span class="line">vim /etc/profile.d/samba.sh</span><br><span class="line"><span class="comment"># 添加 export PATH=$PATH:/usr/local/samba/bin:/usr/local/samba/sbin</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>由于在<code>yum remove samba</code>命令会卸载太多的依赖，在这台资料服务器上不敢瞎搞，尝试着把/usr/local/samba/sbin的四个文件都ln -sf到了/usr/sbin<br>然后重启电脑，打开/usr/local/samba/var查看smbd的log文件，发现最新的日志是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[2021&#x2F;01&#x2F;08 21:05:14.847119,  0] ..&#x2F;..&#x2F;source3&#x2F;smbd&#x2F;server.c:1784(main)</span><br><span class="line">  smbd version 4.13.3 started.</span><br><span class="line">  Copyright Andrew Tridgell and the Samba Team 1992-2020</span><br></pre></td></tr></table></figure>
+<h2 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h2><p>貌似没啥问题了，机房网管表示扫不到漏洞了，数据也都在，各个用户的权限也不用重新配置。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>(·.·)谢谢老板送的火箭(·.·)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/uploads/lx-wechat.jpg" alt="Sean Lee 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/uploads/lx-alipay.jpg" alt="Sean Lee 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Sean Lee
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://seanleecn.github.io/2021/01/11/%E8%AE%B0%E4%B8%80%E6%AC%A1Samba%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8D%87%E7%BA%A7%E7%BB%B4%E6%8A%A4/" title="记一次samba服务器漏洞升级维护">https://seanleecn.github.io/2021/01/11/记一次Samba服务器升级维护/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/01/05/Ubuntu18%E9%85%8D%E7%BD%AEPytorch%E7%8E%AF%E5%A2%83/" rel="prev" title="Ubuntu18配置Pytorch环境">
+                  <i class="fa fa-chevron-left"></i> Ubuntu18配置Pytorch环境
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/01/21/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="next" title="Git学习笔记">
+                  Git学习笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sean Lee</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

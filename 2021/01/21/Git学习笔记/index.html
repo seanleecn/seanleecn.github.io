@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/uploads/apple-touch-icon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon.png">
+  <link rel="mask-icon" href="/uploads/favicon.png" color="#222">
+  <meta name="google-site-verification" content="BMs_JXcFpPIC8YPHZk1ZxmbaZaMS_Gfpf5R2FHhk9tU">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic%7CRoboto+Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"seanleecn.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="作为一个面向Github科研的研究生，熟练掌握git clone的一百种方法。 师兄搭了个GitLab进行多人同步开发，这里根据廖雪峰的Git教程的整理一份个人的学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git学习笔记">
+<meta property="og:url" content="https://seanleecn.github.io/2021/01/21/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Sean&#39;s blog">
+<meta property="og:description" content="作为一个面向Github科研的研究生，熟练掌握git clone的一百种方法。 师兄搭了个GitLab进行多人同步开发，这里根据廖雪峰的Git教程的整理一份个人的学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-21T13:54:28.000Z">
+<meta property="article:modified_time" content="2021-06-09T03:21:55.865Z">
+<meta property="article:author" content="Sean Lee">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://seanleecn.github.io/2021/01/21/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>Git学习笔记 | Sean's blog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Sean's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">This is part of my life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Git%E6%9C%AC%E5%9C%B0%E4%BB%93%E5%BA%93%E5%91%BD%E4%BB%A4"><span class="nav-number">1.</span> <span class="nav-text">Git本地仓库命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8D%95%E5%88%86%E6%94%AF%E6%93%8D%E4%BD%9C"><span class="nav-number">1.1.</span> <span class="nav-text">基本单分支操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E5%88%86%E6%94%AF%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.</span> <span class="nav-text">多分支操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Git%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E5%91%BD%E4%BB%A4"><span class="nav-number">2.</span> <span class="nav-text">Git远程仓库命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Git%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89"><span class="nav-number">3.</span> <span class="nav-text">Git的自定义</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Sean Lee"
+      src="/uploads/lx-avatar.jpg">
+  <p class="site-author-name" itemprop="name">Sean Lee</p>
+  <div class="site-description" itemprop="description">Coding & Robotics</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/seanleecn" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;seanleecn" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:lix0419@outlook.com" title="E-Mail → mailto:lix0419@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://seanleecn.github.io/2021/01/21/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/lx-avatar.jpg">
+      <meta itemprop="name" content="Sean Lee">
+      <meta itemprop="description" content="Coding & Robotics">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sean's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Git学习笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-01-21 21:54:28" itemprop="dateCreated datePublished" datetime="2021-01-21T21:54:28+08:00">2021-01-21</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-06-09 11:21:55" itemprop="dateModified" datetime="2021-06-09T11:21:55+08:00">2021-06-09</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">学习笔记</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>作为一个面向Github科研的研究生，熟练掌握<code>git clone</code>的一百种方法。</p>
+<p>师兄搭了个GitLab进行多人同步开发，这里根据<a target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/896043488029600">廖雪峰的Git教程</a>的整理一份个人的学习笔记</p>
+<a id="more"></a>
+
+<blockquote>
+<p>开篇先推荐一下阮一峰整理的两份Git命令(<a target="_blank" rel="noopener" href="https://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html">资料1</a>，<a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2014/06/git_remote.html">资料2</a>)，比我整理的好多了~</p>
+</blockquote>
+<h1 id="Git本地仓库命令"><a href="#Git本地仓库命令" class="headerlink" title="Git本地仓库命令"></a>Git本地仓库命令</h1><h2 id="基本单分支操作"><a href="#基本单分支操作" class="headerlink" title="基本单分支操作"></a>基本单分支操作</h2><ul>
+<li><p>建立本地仓库</p>
+<p><code>git init</code></p>
+</li>
+<li><p>添加文件到本地仓库</p>
+<p><code>git add .</code></p>
+</li>
+<li><p>提交文件到本地仓库</p>
+<p><code>git commit -m &quot;做了啥改动&quot;</code></p>
+<blockquote>
+<p>add操作可以多次执行，然后1次commit操作打包提交</p>
+</blockquote>
+</li>
+<li><p>查看本地仓库状态</p>
+<p><code>git status</code></p>
+</li>
+<li><p>版本回溯</p>
+<p>  每一次commit操作，相当于打上一个“存档点”，因此可以通过commit记录回到过去</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看commit的历史记录</span></span><br><span class="line">$ git <span class="built_in">log</span></span><br><span class="line">commit c43cbeab0fbee5b344415c6ec7d44cac51f857f6 (HEAD -&gt; master)</span><br><span class="line">Author: lixiang &lt;lix0419@outlook.com&gt;</span><br><span class="line">Date:   Wed Jan 20 21:23:51 2021 +0800</span><br><span class="line"></span><br><span class="line">    reset_test添加commit 2行</span><br><span class="line"></span><br><span class="line">commit 9bc12b122bd803e9ded5af5b10ae805257b00312</span><br><span class="line">Author: lixiang &lt;lix0419@outlook.com&gt;</span><br><span class="line">Date:   Wed Jan 20 21:22:42 2021 +0800</span><br><span class="line"></span><br><span class="line">    添加<span class="built_in">test</span>文件夹</span><br></pre></td></tr></table></figure>
+
+<p>  当前在c43cb…这个<strong>HEAD</strong>节点上。上一个版本就是<strong>HEAD^</strong>，上100个版本是<strong>HEAD~100</strong></p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 回退版本</span></span><br><span class="line">$ git reset --hard HEAD^</span><br><span class="line"><span class="comment"># 再次git log</span></span><br><span class="line">$ git <span class="built_in">log</span> </span><br><span class="line">commit 9bc12b122bd803e9ded5af5b10ae805257b00312 (HEAD -&gt; master)</span><br><span class="line">Author: lixiang &lt;lix0419@outlook.com&gt;</span><br><span class="line">Date:   Wed Jan 20 21:22:42 2021 +0800</span><br><span class="line"></span><br><span class="line">    添加<span class="built_in">test</span>文件夹</span><br></pre></td></tr></table></figure>
+
+<p>  发现我们丢失了最后一次commit的东西，如果后悔的话，可以通过制定commit的id来找回</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git reflog</span><br><span class="line">   9bc12b1 (HEAD -&gt; master) HEAD@&#123;0&#125;: reset: moving to HEAD^</span><br><span class="line">   c43cbea HEAD@&#123;1&#125;: commit: reset_test添加commit 2行</span><br><span class="line">   9bc12b1 (HEAD -&gt; master) HEAD@&#123;2&#125;: commit: 添加<span class="built_in">test</span>文件夹</span><br><span class="line">   87bd242 HEAD@&#123;3&#125;: commit: 修改笔记</span><br><span class="line">   722f491 HEAD@&#123;4&#125;: commit: add readme</span><br><span class="line">   3d224cd HEAD@&#123;5&#125;: commit (initial): 添加[本地仓库]笔记</span><br></pre></td></tr></table></figure>
+<p>  reflog命令记录了全部的操作，reset之前的id为c43cbea</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 撤销reset操作</span></span><br><span class="line">git reset --hard c43cbea</span><br></pre></td></tr></table></figure></li>
+<li><p>撤销修改</p>
+<p>当改动了本地库的文件，需要撤销的时候，可以通过git checkout命令撤下修改</p>
+<blockquote>
+<p>对于vscode的用户，这一部分直接在vscode自带的版本控制栏里面点点点就完事了…</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 当没有执行git add操作的时候，将回到上一次commit后的情况</span></span><br><span class="line">$ git checkout -- <span class="built_in">test</span>/checkout_test.txt</span><br><span class="line"><span class="comment"># 当执行了git add操作的时候，将回到上次add后的情况</span></span><br><span class="line">$ git status</span><br><span class="line">位于分支 master</span><br><span class="line">要提交的变更：</span><br><span class="line">  （使用 <span class="string">&quot;git reset HEAD &lt;文件&gt;...&quot;</span> 以取消暂存）</span><br><span class="line"></span><br><span class="line">          修改：     <span class="built_in">test</span>/checkout_test.txt</span><br><span class="line"><span class="comment"># 所以撤销add操作的命令为</span></span><br><span class="line">$ git reset HEAD <span class="built_in">test</span>/checkout_test.txt</span><br></pre></td></tr></table></figure></li>
+<li><p>删除文件</p>
+<p>当文件已经被commit之后，想要删除它(不再使用git跟踪修改)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git rm <span class="built_in">test</span>/rm_test.txt</span><br><span class="line">git commit -m <span class="string">&quot;remove rm_test.txt&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="多分支操作"><a href="#多分支操作" class="headerlink" title="多分支操作"></a>多分支操作</h2></li>
+<li><p>创建分支</p>
+<blockquote>
+<p>创建分支实际上是建立了一个指针指向当前的commit，同时HEAD指针指向dev</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -b表示创建并切换</span></span><br><span class="line">git checkout -b dev</span><br><span class="line"><span class="comment"># 等效于下面</span></span><br><span class="line">git branch dev</span><br><span class="line">git checkout dev</span><br><span class="line"><span class="comment"># 查看当前分支</span></span><br><span class="line">git branch</span><br></pre></td></tr></table></figure></li>
+<li><p>合并分支</p>
+<blockquote>
+<p>在一个分支上面进行修改并<strong>commit之后</strong>，切回master分支，进行合并分支</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 回到主分支，此时修改没了</span></span><br><span class="line">git checkout master</span><br><span class="line"><span class="comment"># 把dev分支合并到master上面去</span></span><br><span class="line">git merge dev</span><br><span class="line"><span class="comment"># 删除dev分支</span></span><br><span class="line">git branch -d dev</span><br></pre></td></tr></table></figure></li>
+<li><p>切换分支</p>
+<blockquote>
+<p>git checkout命令既可以切换分支，也可以撤销修改，为了避免迷惑，在git 2.23版本引入了switch命令。目前Ubuntu18的官方apt安装的git是2.17.1版本，还不支持这个特性。。。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建并切换</span></span><br><span class="line">git switch -c dev</span><br><span class="line"><span class="comment"># 仅切换</span></span><br><span class="line">git switch master</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分支冲突</p>
+<blockquote>
+<p>回顾上面的分支合并操作，新建的dev分支上面的commit是领先于master的，也就是说在切出dev分支之后，master分支没有进行过commit。当master和deb分支都进行了commit，就要解决分支冲突的问题。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建新的分支</span></span><br><span class="line">git checkout -b dev1</span><br><span class="line"><span class="comment"># 修改一些文件后提交commit(在dev1分支)</span></span><br><span class="line"><span class="comment"># 切回master分支</span></span><br><span class="line">git checkout master</span><br><span class="line"><span class="comment"># 尝试合并</span></span><br><span class="line">git merge dev1</span><br><span class="line"><span class="comment"># 出现冲突解决后成功合并，可以看一下此时的时间线</span></span><br><span class="line">$ git <span class="built_in">log</span> --graph --pretty=oneline --abbrev-commit</span><br><span class="line">*   85aa805 (HEAD -&gt; master) Merge branch <span class="string">&#x27;dev1&#x27;</span></span><br><span class="line">  |\  </span><br><span class="line">  | * ef82add (dev1) 测试冲突</span><br><span class="line">  * | ecaecfb 测试冲突-在master上进行commit</span><br><span class="line">  |/  </span><br><span class="line">  * d401351 增加dev分支</span><br><span class="line"><span class="comment"># 删除dev1分支</span></span><br><span class="line">git branch -d dev1</span><br></pre></td></tr></table></figure>
+<h1 id="Git远程仓库命令"><a href="#Git远程仓库命令" class="headerlink" title="Git远程仓库命令"></a>Git远程仓库命令</h1></li>
+</ul>
+<blockquote>
+<p>没有配置好Github的ssh秘钥的话参考<a target="_blank" rel="noopener" href="https://docs.github.com/cn/github/authenticating-to-github/connecting-to-github-with-ssh">Github官网教程</a></p>
+</blockquote>
+<ul>
+<li><p>本地仓库关联远程仓库</p>
+<p><code>git remote add origin git@github.com:seanleecn/learn_git.git</code></p>
+<blockquote>
+<p>这样就添加了一个名字叫做origin的远程仓库</p>
+</blockquote>
+</li>
+<li><p>本地首次推送远程</p>
+<p><code>git push -u origin master</code></p>
+<blockquote>
+<p>注意1：2020年10月开始，Github为了XX政治正确，将默认分支的名称从master改为了main，但是本地的默认是在master分支的。建议修改Github的<a target="_blank" rel="noopener" href="https://github.com/settings/repositories">默认新建分支</a>为master。</p>
+<p>注意2：建仓库的时候不要新建readme文件，否则远程就多了一次commit</p>
+</blockquote>
+</li>
+<li><p>克隆远程仓库</p>
+<p><code>git clone xxx</code></p>
+<p>从远程仓库克隆时，实际上Git自动把本地的master分支和远程的master分支对应起来了，并且，远程仓库的默认名称(在本地仓库的角度看)是origin</p>
+</li>
+<li><p>查看远程库</p>
+<p><code>git remote -v</code></p>
+</li>
+<li><p>推送分支</p>
+<p><code>git push origin master</code></p>
+<p>上面这句话的意思是把本地的master推送到origin这个远程库上</p>
+<p>这里需要<strong>注意</strong>的是，在push命令中并没有指定远程库的分支。前面说过clone下来的库默认把本地的master和远程的master关联起来，但是当有多个分支的时候，就会出现问题。</p>
+</li>
+<li><p>多分支仓库的多人协作</p>
+<p>当克隆一个多分支的仓库的时候，只是把master分支拉到了本地</p>
+<p>比如想要在本地dev分支上面继续origin上面的dev分支开发，需要把远程的dev分支拉到本地的dev分支上面</p>
+<p><code>git checkout -b dev origin/dev</code></p>
+<p>之后就可以在dev上面修改并推送到origin/dev</p>
+<p>当一个仓库是由多人维护的时候，存在origin的提交比我们本地更靠前的情况(也就是别人已经往origin上面推几个commit)，这时候需要先把远程的修改拉到本地</p>
+<p><code>git pull</code></p>
+<p>如果<code>git pull</code>提示<code>no tracking information</code>，说明本地分支和远程分支的链接关系没有创建，用命令<code>git branch --set-upstream-to &lt;branch-name&gt; origin/&lt;branch-name&gt;</code></p>
+</li>
+<li><p>一个本地库关联多个远程库</p>
+<p>举个应用情景的例子：</p>
+<ul>
+<li>从Github直接clone了一个程序，改啊改啊改啊，当我想要push到Github上面的时候，因为不是fork之后再clone，没有权限push，这时候就需要链接一个新的远程库</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加一个新的远程库，注意不能叫origin了</span></span><br><span class="line">git remote add my_repo git@github.com:seanleecn/learn_git.git</span><br><span class="line"><span class="comment"># 这时候可以指定push的远程库</span></span><br><span class="line">git push github master</span><br></pre></td></tr></table></figure>
+<h1 id="Git的自定义"><a href="#Git的自定义" class="headerlink" title="Git的自定义"></a>Git的自定义</h1></li>
+<li><p>.gitignore文件</p>
+<p><code>.gitignore</code>文件可以忽略一些中间生成文件(比如build目录)，其语法是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 排除所有.class文件:</span><br><span class="line">*.class</span><br><span class="line"># 不排除.gitignore</span><br><span class="line">!.gitignore</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>(·.·)谢谢老板送的火箭(·.·)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/uploads/lx-wechat.jpg" alt="Sean Lee 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/uploads/lx-alipay.jpg" alt="Sean Lee 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Sean Lee
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://seanleecn.github.io/2021/01/21/Git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="Git学习笔记">https://seanleecn.github.io/2021/01/21/Git学习笔记/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Git/" rel="tag"><i class="fa fa-tag"></i> Git</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/01/11/%E8%AE%B0%E4%B8%80%E6%AC%A1Samba%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8D%87%E7%BA%A7%E7%BB%B4%E6%8A%A4/" rel="prev" title="记一次samba服务器漏洞升级维护">
+                  <i class="fa fa-chevron-left"></i> 记一次samba服务器漏洞升级维护
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sean Lee</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

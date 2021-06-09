@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/uploads/apple-touch-icon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon.png">
+  <link rel="mask-icon" href="/uploads/favicon.png" color="#222">
+  <meta name="google-site-verification" content="BMs_JXcFpPIC8YPHZk1ZxmbaZaMS_Gfpf5R2FHhk9tU">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic%7CRoboto+Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"seanleecn.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="记录剑指Offer中动态规划相关的题目思路及解答。 文章会给出思路和代码，同时为了方便本地调试，还会提供相应的测试用例。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="剑指Offer刷题日记-动态规划">
+<meta property="og:url" content="https://seanleecn.github.io/2020/08/21/%E5%89%91%E6%8C%87Offer%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/index.html">
+<meta property="og:site_name" content="Sean&#39;s blog">
+<meta property="og:description" content="记录剑指Offer中动态规划相关的题目思路及解答。 文章会给出思路和代码，同时为了方便本地调试，还会提供相应的测试用例。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-21T08:47:29.000Z">
+<meta property="article:modified_time" content="2021-06-09T03:21:55.865Z">
+<meta property="article:author" content="Sean Lee">
+<meta property="article:tag" content="剑指Offer">
+<meta property="article:tag" content="动态规划">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://seanleecn.github.io/2020/08/21/%E5%89%91%E6%8C%87Offer%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>剑指Offer刷题日记-动态规划 | Sean's blog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Sean's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">This is part of my life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87Offer10%EF%BC%9A%E6%96%90%E6%B3%A2%E9%82%A3%E5%A5%91%E6%95%B0%E5%88%97"><span class="nav-number">1.</span> <span class="nav-text">剑指Offer10：斐波那契数列</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF1-%E7%9B%B4%E6%8E%A5%E9%80%92%E5%BD%92%EF%BC%8CO-2-N-%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">1.1.</span> <span class="nav-text">思路1: 直接递归，O(2^N)复杂度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code"><span class="nav-number">1.1.1.</span> <span class="nav-text">show me code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF2-%E5%BE%AA%E7%8E%AF%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.</span> <span class="nav-text">思路2:循环实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">show me code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF3%EF%BC%9A%E5%B8%A6%E5%89%AA%E6%9E%9D%E7%9A%84%E9%80%92%E5%BD%92"><span class="nav-number">1.3.</span> <span class="nav-text">思路3：带剪枝的递归</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-2"><span class="nav-number">1.3.1.</span> <span class="nav-text">show me code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B"><span class="nav-number">1.4.</span> <span class="nav-text">测试用例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87Offer10-2%EF%BC%9A%E9%9D%92%E8%9B%99%E8%B7%B3%E5%8F%B0%E9%98%B6%E9%97%AE%E9%A2%98"><span class="nav-number">2.</span> <span class="nav-text">剑指Offer10-2：青蛙跳台阶问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">2.1.</span> <span class="nav-text">思路：动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-3"><span class="nav-number">2.1.1.</span> <span class="nav-text">show me code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B-1"><span class="nav-number">2.2.</span> <span class="nav-text">测试用例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87Offer14-1%EF%BC%9A%E5%89%AA%E7%BB%B3%E5%AD%90"><span class="nav-number">3.</span> <span class="nav-text">剑指Offer14-1：剪绳子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87Offer14-2%EF%BC%9A%E5%89%AA%E7%BB%B3%E5%AD%90"><span class="nav-number">4.</span> <span class="nav-text">剑指Offer14-2：剪绳子</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF14-1-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">4.1.</span> <span class="nav-text">思路14_1:动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-4"><span class="nav-number">4.1.1.</span> <span class="nav-text">show me code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF2-%E8%B4%AA%E5%A9%AA"><span class="nav-number">4.2.</span> <span class="nav-text">思路2: 贪婪</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-5"><span class="nav-number">4.2.1.</span> <span class="nav-text">show me code</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B-2"><span class="nav-number">4.2.2.</span> <span class="nav-text">测试用例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87Offer42%EF%BC%9A%E8%BF%9E%E7%BB%AD%E5%AD%90%E6%95%B0%E7%BB%84%E7%9A%84%E6%9C%80%E5%A4%A7%E5%92%8C"><span class="nav-number">5.</span> <span class="nav-text">剑指Offer42：连续子数组的最大和</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%EF%BC%81"><span class="nav-number">5.1.</span> <span class="nav-text">思路：动态规划！</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-6"><span class="nav-number">5.1.1.</span> <span class="nav-text">show me code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B-3"><span class="nav-number">5.2.</span> <span class="nav-text">测试用例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87Offer46%EF%BC%9A%E6%8A%8A%E6%95%B0%E5%AD%97%E7%BF%BB%E8%AF%91%E6%88%90%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">6.</span> <span class="nav-text">剑指Offer46：把数字翻译成字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92-1"><span class="nav-number">6.1.</span> <span class="nav-text">思路：动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-7"><span class="nav-number">6.1.1.</span> <span class="nav-text">show me code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B-4"><span class="nav-number">6.2.</span> <span class="nav-text">测试用例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87Offer47%EF%BC%9A%E7%A4%BC%E7%89%A9%E7%9A%84%E6%9C%80%E5%A4%A7%E4%BB%B7%E5%80%BC"><span class="nav-number">7.</span> <span class="nav-text">剑指Offer47：礼物的最大价值</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92-2"><span class="nav-number">7.1.</span> <span class="nav-text">思路：动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-8"><span class="nav-number">7.1.1.</span> <span class="nav-text">show me code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B-5"><span class="nav-number">7.2.</span> <span class="nav-text">测试用例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87Offer49%EF%BC%9A%E4%B8%91%E6%95%B0"><span class="nav-number">8.</span> <span class="nav-text">剑指Offer49：丑数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92-3"><span class="nav-number">8.1.</span> <span class="nav-text">思路：动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-9"><span class="nav-number">8.1.1.</span> <span class="nav-text">show me code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B-6"><span class="nav-number">8.2.</span> <span class="nav-text">测试用例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87-Offer-60-n%E4%B8%AA%E9%AA%B0%E5%AD%90%E7%9A%84%E7%82%B9%E6%95%B0"><span class="nav-number">9.</span> <span class="nav-text">剑指 Offer 60. n个骰子的点数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92-4"><span class="nav-number">9.1.</span> <span class="nav-text">思路：动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-10"><span class="nav-number">9.1.1.</span> <span class="nav-text">show me code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B-7"><span class="nav-number">9.2.</span> <span class="nav-text">测试用例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87Offer63%EF%BC%9A%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E5%A4%A7%E5%88%A9%E6%B6%A6"><span class="nav-number">10.</span> <span class="nav-text">剑指Offer63：股票的最大利润</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF1%EF%BC%9A%E8%B4%AA%E5%BF%83"><span class="nav-number">10.1.</span> <span class="nav-text">思路1：贪心</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-11"><span class="nav-number">10.1.1.</span> <span class="nav-text">show me code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF2%EF%BC%9A%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92"><span class="nav-number">10.2.</span> <span class="nav-text">思路2：动态规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-12"><span class="nav-number">10.2.1.</span> <span class="nav-text">show me code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B-8"><span class="nav-number">10.3.</span> <span class="nav-text">测试用例</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Sean Lee"
+      src="/uploads/lx-avatar.jpg">
+  <p class="site-author-name" itemprop="name">Sean Lee</p>
+  <div class="site-description" itemprop="description">Coding & Robotics</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/seanleecn" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;seanleecn" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:lix0419@outlook.com" title="E-Mail → mailto:lix0419@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://seanleecn.github.io/2020/08/21/%E5%89%91%E6%8C%87Offer%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/lx-avatar.jpg">
+      <meta itemprop="name" content="Sean Lee">
+      <meta itemprop="description" content="Coding & Robotics">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sean's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          剑指Offer刷题日记-动态规划
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-21 16:47:29" itemprop="dateCreated datePublished" datetime="2020-08-21T16:47:29+08:00">2020-08-21</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-06-09 11:21:55" itemprop="dateModified" datetime="2021-06-09T11:21:55+08:00">2021-06-09</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>记录<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problemset/lcof/">剑指Offer</a>中<code>动态规划</code>相关的题目思路及解答。</p>
+<p>文章会给出思路和代码，同时为了方便本地调试，还会提供相应的测试用例。</p>
+<a id="more"></a>
+
+<h1 id="剑指Offer10：斐波那契数列"><a href="#剑指Offer10：斐波那契数列" class="headerlink" title="剑指Offer10：斐波那契数列"></a>剑指Offer10：斐波那契数列</h1><p>题目：写一个函数，输入n，求斐波那契（Fibonacci）数列的第n项。</p>
+<p>斐波那契数列的定义如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">F(0) &#x3D; 0</span><br><span class="line">F(1) &#x3D; 1</span><br><span class="line">F(N) &#x3D; F(N - 1) + F(N - 2), 其中 N &gt; 1.</span><br></pre></td></tr></table></figure>
+<h2 id="思路1-直接递归，O-2-N-复杂度"><a href="#思路1-直接递归，O-2-N-复杂度" class="headerlink" title="思路1: 直接递归，O(2^N)复杂度"></a>思路1: 直接递归，O(2^N)复杂度</h2><p>自顶向下计算,存在太多的重复中间项</p>
+<h3 id="show-me-code"><a href="#show-me-code" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fib</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">int</span> res;</span><br><span class="line">        res = fib(n - <span class="number">1</span>) + fib(n - <span class="number">2</span>);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<h2 id="思路2-循环实现"><a href="#思路2-循环实现" class="headerlink" title="思路2:循环实现"></a>思路2:循环实现</h2><p>自下向上(计算f(2),f(3)…直到f(n)) </p>
+<h3 id="show-me-code-1"><a href="#show-me-code-1" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fib</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> fibN, fibN_minus1(<span class="number">1</span>), fibN_minus2(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        fibN = (fibN_minus1 + fibN_minus2) % <span class="number">1000000007</span>;</span><br><span class="line">        fibN_minus2 = fibN_minus1;</span><br><span class="line">        fibN_minus1 = fibN;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> fibN;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<h2 id="思路3：带剪枝的递归"><a href="#思路3：带剪枝的递归" class="headerlink" title="思路3：带剪枝的递归"></a>思路3：带剪枝的递归</h2><p>自顶向下，从f(n)开始计算</p>
+<h3 id="show-me-code-2"><a href="#show-me-code-2" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">helper</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;memo, <span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span> || n == <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (memo[n] != <span class="number">0</span>) <span class="comment">//如果已经计算过，直接返回就好了</span></span><br><span class="line">        <span class="keyword">return</span> memo[n];</span><br><span class="line">    memo[n] = (helper(memo, n - <span class="number">1</span>) + helper(memo, n - <span class="number">2</span>)) % <span class="number">1000000007</span>;</span><br><span class="line">    <span class="keyword">return</span> memo[n];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fib</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">memo</span><span class="params">(n + <span class="number">1</span>, <span class="number">0</span>)</span></span>; <span class="comment">// 记录已经算过的数字，用于剪枝</span></span><br><span class="line">    <span class="keyword">return</span> helper(memo, n);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="测试用例"><a href="#测试用例" class="headerlink" title="测试用例"></a>测试用例</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **agrv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;n=2: &quot;</span> &lt;&lt; fib(<span class="number">2</span>) &lt;&lt; <span class="built_in">endl</span>;   <span class="comment">// out:1</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;n=5: &quot;</span> &lt;&lt; fib(<span class="number">5</span>) &lt;&lt; <span class="built_in">endl</span>;   <span class="comment">// out:5</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;n=45: &quot;</span> &lt;&lt; fib(<span class="number">45</span>) &lt;&lt; <span class="built_in">endl</span>; <span class="comment">// out:134903163</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="剑指Offer10-2：青蛙跳台阶问题"><a href="#剑指Offer10-2：青蛙跳台阶问题" class="headerlink" title="剑指Offer10-2：青蛙跳台阶问题"></a>剑指Offer10-2：青蛙跳台阶问题</h1><p>题目：一只青蛙一次可以跳上1级台阶，也可以跳上2级台阶。求该青蛙跳上一个n 级的台阶总共有多少种跳法。 </p>
+<p>答案需要取模1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1。 </p>
+<h2 id="思路：动态规划"><a href="#思路：动态规划" class="headerlink" title="思路：动态规划"></a>思路：动态规划</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">n&#x3D;1 f(n)&#x3D;1</span><br><span class="line">n&#x3D;2 f(n)&#x3D;2</span><br><span class="line">最后一跳只有两种可能:跳一层或者跳两层,跳一层的情况即f(3-1),跳两层的情况即f(3-2)</span><br><span class="line">所以,f(3)&#x3D;f(1)+f(2)</span><br><span class="line">n&#x3D;N f(N)&#x3D;f(N-1)+f(N-2)</span><br><span class="line">即本题目也是一个斐波那契数列,只不过前2项不同</span><br></pre></td></tr></table></figure>
+<h3 id="show-me-code-3"><a href="#show-me-code-3" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">numWays</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">int</span> f, f_minus1(<span class="number">2</span>), f_minus2(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">3</span>; i &lt;= n; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        f = (f_minus1 + f_minus2) % <span class="number">1000000007</span>;</span><br><span class="line">        f_minus2 = f_minus1;</span><br><span class="line">        f_minus1 = f;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> f;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="测试用例-1"><a href="#测试用例-1" class="headerlink" title="测试用例"></a>测试用例</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;n=2: &quot;</span> &lt;&lt; numWays(<span class="number">2</span>) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;n=7: &quot;</span> &lt;&lt; numWays(<span class="number">7</span>) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;n=0: &quot;</span> &lt;&lt; numWays(<span class="number">0</span>) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="剑指Offer14-1：剪绳子"><a href="#剑指Offer14-1：剪绳子" class="headerlink" title="剑指Offer14-1：剪绳子"></a>剑指Offer14-1：剪绳子</h1><p>题目：给你一根长度为 n 的绳子，请把绳子剪成整数长度的 m段（m、n都是整数，n&gt;1并且m&gt;1），每段绳子的长度记为 k[0],k[1]…k[m-1] 。 </p>
+<p>请问k[0]<em>k[1]</em>…*k[m-1] 可能的最大乘积是多少？</p>
+<p>例如，当绳子的长度是8时，我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。</p>
+<h1 id="剑指Offer14-2：剪绳子"><a href="#剑指Offer14-2：剪绳子" class="headerlink" title="剑指Offer14-2：剪绳子"></a>剑指Offer14-2：剪绳子</h1><p>题目：给你一根长度为 n 的绳子，请把绳子剪成整数长度的 m 段（m、n都是整数，n&gt;1并且m&gt;1），每段绳子的长度记为 k[0],k[1]…k[m - 1] 。</p>
+<p>请问 k[0]<em>k[1]</em>…*k[m - 1] 可能的最大乘积是多少？<br>例如，当绳子的长度是8时，我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。</p>
+<p>答案需要取模 1e9+7（1000000007），如计算初始结果为：1000000008，请返回 1</p>
+<h2 id="思路14-1-动态规划"><a href="#思路14-1-动态规划" class="headerlink" title="思路14_1:动态规划"></a>思路14_1:动态规划</h2><p>定义f(n)为长度为n的绳子剪成m段乘积的最大值</p>
+<p>自底向上计算 </p>
+<h3 id="show-me-code-4"><a href="#show-me-code-4" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cuttingRope</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//长度n&lt;=3做特殊处理</span></span><br><span class="line">    <span class="keyword">if</span> (n &lt; <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>; <span class="comment">//1&lt;2</span></span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">3</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span>; <span class="comment">//2&lt;3</span></span><br><span class="line">    <span class="comment">// maxs[n]表示长度为n的绳子得到的结果</span></span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">maxs</span><span class="params">(n + <span class="number">1</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">    <span class="comment">// n=1,2,3的时候,如果再分割的话,结果比不分割还小,所以当绳子到1,2,3长度之后就不剪了,返回的值就是1,2,3</span></span><br><span class="line">    maxs[<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">    maxs[<span class="number">2</span>] = <span class="number">2</span>;</span><br><span class="line">    maxs[<span class="number">3</span>] = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> max_i, i, j;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">4</span>; i &lt;= n; i++)</span><br><span class="line">    &#123; <span class="comment">//自下而上计算最大值,并存在maxs中</span></span><br><span class="line">        max_i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">1</span>; j &lt;= i / <span class="number">2</span>; j++)</span><br><span class="line">        &#123; <span class="comment">//i/2为了减少计算次数</span></span><br><span class="line">            <span class="keyword">int</span> product_max = maxs[j] * maxs[i - j];</span><br><span class="line">            <span class="keyword">if</span> (product_max &gt; max_i)</span><br><span class="line">            &#123;</span><br><span class="line">                max_i = product_max;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        maxs[i] = max_i;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> maxs[n];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="思路2-贪婪"><a href="#思路2-贪婪" class="headerlink" title="思路2: 贪婪"></a>思路2: 贪婪</h2><p>第二题比第一题多了大数求余步骤</p>
+<p>当n&gt;=5,3(n-3)&gt;=2(n-2)</p>
+<p>当n=4时,最大的情况是2*2=4,即可以不用剪 </p>
+<h3 id="show-me-code-5"><a href="#show-me-code-5" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cuttingRope</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n &lt; <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (n == <span class="number">3</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">long</span> res = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (n &gt; <span class="number">4</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        res *= <span class="number">3</span>;</span><br><span class="line">        res = res % <span class="number">1000000007</span>;</span><br><span class="line">        n -= <span class="number">3</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res * n % <span class="number">1000000007</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="测试用例-2"><a href="#测试用例-2" class="headerlink" title="测试用例"></a>测试用例</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; cuttingRope(<span class="number">8</span>) &lt;&lt; <span class="built_in">endl</span>;  <span class="comment">//期望输出18</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; cuttingRope(<span class="number">2</span>) &lt;&lt; <span class="built_in">endl</span>;  <span class="comment">//期望输出1</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; cuttingRope(<span class="number">10</span>) &lt;&lt; <span class="built_in">endl</span>; <span class="comment">//期望输出36</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="剑指Offer42：连续子数组的最大和"><a href="#剑指Offer42：连续子数组的最大和" class="headerlink" title="剑指Offer42：连续子数组的最大和"></a>剑指Offer42：连续子数组的最大和</h1><p>题目：输入一个整型数组，数组里有正数也有负数。数组中一个或连续的多个整数组成一个子数组。求所有子数组的和的最大值。要求时间复杂度为O(n)。</p>
+<h2 id="思路：动态规划！"><a href="#思路：动态规划！" class="headerlink" title="思路：动态规划！"></a>思路：动态规划！</h2><ol>
+<li><p>用dp[i]表示以i为nums[i]为结尾的连续子数组的最大和</p>
+</li>
+<li><p>状态转移方程</p>
+</li>
+</ol>
+<p>当dp[i-1] &lt; 0，说明不如直接用nums[i]作为dp[i]</p>
+<p>当dp[i-1] &gt; 0，说明nums[i] + dp[i-1]就是dp[i]</p>
+<ol start="3">
+<li>返回dp数组的最大值 </li>
+</ol>
+<h3 id="show-me-code-6"><a href="#show-me-code-6" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">maxSubArray</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;nums)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">dp</span><span class="params">(nums.size(), nums[<span class="number">0</span>])</span></span>; <span class="comment">//初始化为nums[0]</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; nums.size(); ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (dp[i - <span class="number">1</span>] &lt;= <span class="number">0</span>)</span><br><span class="line">            dp[i] = nums[i];</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            dp[i] = nums[i] + dp[i - <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> *max_element(dp.begin(), dp.end()); <span class="comment">// #include &lt;algorithm&gt;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="测试用例-3"><a href="#测试用例-3" class="headerlink" title="测试用例"></a>测试用例</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; nums = &#123;<span class="number">-2</span>, <span class="number">1</span>, <span class="number">-3</span>, <span class="number">4</span>, <span class="number">-1</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">-5</span>, <span class="number">4</span>&#125;;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; maxSubArray(nums) &lt;&lt; <span class="built_in">endl</span>; <span class="comment">//期望输出6</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="剑指Offer46：把数字翻译成字符串"><a href="#剑指Offer46：把数字翻译成字符串" class="headerlink" title="剑指Offer46：把数字翻译成字符串"></a>剑指Offer46：把数字翻译成字符串</h1><p>题目：给定一个数字，我们按照如下规则把它翻译为字符串：0翻译成”a”，1翻译成”b”，……，11翻译成”l”，……，25翻译成”z”。</p>
+<p>一个数字可能有多个翻译。例如12258有5种不同的翻译，它们分别是”bccfi”、”bwfi”、”bczi”、”mcfi”和”mzi”。</p>
+<p>请编程实现一个函数用来计算一个数字有多少种不同的翻译方法。</p>
+<h2 id="思路：动态规划-1"><a href="#思路：动态规划-1" class="headerlink" title="思路：动态规划"></a>思路：动态规划</h2><p>这题的递推公式有点难以理解，以12258为例子</p>
+<p>dp[i]表示长度为i的数字有几种翻译方式</p>
+<ol>
+<li><p>最后一个数字单独翻译，根据<em>分步乘法</em>（先翻译前i-1位，再翻译最后1位，而最后1位只有一种翻译方法）得到dp[i] = dp[i-1] * 1</p>
+</li>
+<li><p>最后两个数字可以组合翻译，根据<em>分类加法</em>（最后两位组合翻译+最后两位单独翻译）得到dp[i] = dp[i-1] * 1 + dp[i-2] * 1<br>因此可以得到</p>
+</li>
+</ol>
+<p>dp[i] = dp[i-1]            10*(i-1)+i不在[10,25]的范围,不能被翻译</p>
+<p>dp[i] = dp[i-1] + dp[i-2]  10*(i-1)+i在[10,25]的范围，能被翻译</p>
+<h3 id="show-me-code-7"><a href="#show-me-code-7" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">translateNum</span><span class="params">(<span class="keyword">int</span> num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">string</span> str = to_string(num);</span><br><span class="line">    <span class="keyword">int</span> len = str.length();</span><br><span class="line">    <span class="comment">// 初始化dp</span></span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">dp</span><span class="params">(len + <span class="number">1</span>)</span></span>;</span><br><span class="line">    dp[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">    dp[<span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt; len + <span class="number">1</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (str[i - <span class="number">2</span>] == <span class="string">&#x27;1&#x27;</span> || (str[i - <span class="number">2</span>] == <span class="string">&#x27;2&#x27;</span> &amp;&amp; str[i - <span class="number">1</span>] &lt;= <span class="string">&#x27;5&#x27;</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            dp[i] = dp[i - <span class="number">1</span>] + dp[i - <span class="number">2</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            dp[i] = dp[i - <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dp[len];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="测试用例-4"><a href="#测试用例-4" class="headerlink" title="测试用例"></a>测试用例</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; translateNum(<span class="number">12258</span>) &lt;&lt; <span class="built_in">endl</span>; <span class="comment">//5</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="剑指Offer47：礼物的最大价值"><a href="#剑指Offer47：礼物的最大价值" class="headerlink" title="剑指Offer47：礼物的最大价值"></a>剑指Offer47：礼物的最大价值</h1><p>题目：在一个m×n的棋盘的每一格都放有一个礼物，每个礼物都有一定的价值（价值大于0）。</p>
+<p>你可以从棋盘的左上角开始拿格子里的礼物，并每次向右或者向下移动一格直到到达棋盘的右下角。</p>
+<p>给定一个棋盘及其上面的礼物，请计算你最多能拿到多少价值的礼物？</p>
+<h2 id="思路：动态规划-2"><a href="#思路：动态规划-2" class="headerlink" title="思路：动态规划"></a>思路：动态规划</h2><ol>
+<li><p>dp数组表示某一个格子的最大价值</p>
+</li>
+<li><p>状态转移方程 </p>
+<p>dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]) + grid[i][j];</p>
+</li>
+</ol>
+<h3 id="show-me-code-8"><a href="#show-me-code-8" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">maxValue</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; &amp;grid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> row = grid.size();</span><br><span class="line">    <span class="keyword">int</span> col = grid[<span class="number">0</span>].size();</span><br><span class="line">    <span class="comment">// 由于动态转移方程中涉及到了[i-1]的索引，因此将dp数组扩大一行一列，防止索引越界</span></span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; dp(row + <span class="number">1</span>, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;(col + <span class="number">1</span>, <span class="number">0</span>));</span><br><span class="line">    <span class="comment">// dp[i][j] 表示grid[0][0] -&gt; grid[i-1][j-1]的最大价值</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= row; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= col; j++)</span><br><span class="line">        &#123;</span><br><span class="line">            dp[i][j] = max(dp[i - <span class="number">1</span>][j], dp[i][j - <span class="number">1</span>]) + grid[i - <span class="number">1</span>][j - <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 注意索引</span></span><br><span class="line">    <span class="keyword">return</span> dp[row][col];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="测试用例-5"><a href="#测试用例-5" class="headerlink" title="测试用例"></a>测试用例</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; grid = &#123;&#123;<span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>&#125;,</span><br><span class="line">                                &#123;<span class="number">1</span>, <span class="number">5</span>, <span class="number">1</span>&#125;,</span><br><span class="line">                                &#123;<span class="number">4</span>, <span class="number">2</span>, <span class="number">1</span>&#125;&#125;;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; maxValue(grid) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="comment">// 12 ,路径为 1→3→5→2→1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="剑指Offer49：丑数"><a href="#剑指Offer49：丑数" class="headerlink" title="剑指Offer49：丑数"></a>剑指Offer49：丑数</h1><p>题目：我们把只包含因子2、3和5的数称作丑数（Ugly Number）。求按从小到大的顺序的第n个丑数。</p>
+<p>习惯上我们把1当做第一个丑数。 </p>
+<h2 id="思路：动态规划-3"><a href="#思路：动态规划-3" class="headerlink" title="思路：动态规划"></a>思路：动态规划</h2><ol>
+<li>任意的丑数<em>2、</em>3、*5都是丑数（2、3、5都是质数）</li>
+<li>使用一个dp数组保存全部的丑数，dp[0] = 1</li>
+<li>已知一个丑数dp[n]，则dp[n+1]应满足min(dp[a]*2, dp[b]*3, dp[c]*5)，其中a、b、c是以2、3、5为因子的下标</li>
+<li>关于dp的理解：根据特点1可知，对于一个丑数数列，分别<em>2、</em>3、*5得到三个数列A、B、C都是丑数数列。因此需要把这三个数列整合成一个，整合的方法就是建立三个指针，每次比较这三个指针中那个值得数最小，然后指针后移一位</li>
+</ol>
+<h3 id="show-me-code-9"><a href="#show-me-code-9" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">nthUglyNumber</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// dp初始化</span></span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">dp</span><span class="params">(n, <span class="number">0</span>)</span></span>;</span><br><span class="line">    dp[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 三个下标初始化</span></span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">0</span>, b = <span class="number">0</span>, c = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> n2 = dp[a] * <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">int</span> n3 = dp[b] * <span class="number">3</span>;</span><br><span class="line">        <span class="keyword">int</span> n5 = dp[c] * <span class="number">5</span>;</span><br><span class="line">        dp[i] = min(min(n2, n3), n5);</span><br><span class="line">        <span class="keyword">if</span> (dp[i] == n2)</span><br><span class="line">            a++;</span><br><span class="line">        <span class="keyword">if</span> (dp[i] == n3)</span><br><span class="line">            b++;</span><br><span class="line">        <span class="keyword">if</span> (dp[i] == n5)</span><br><span class="line">            c++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dp[n - <span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="测试用例-6"><a href="#测试用例-6" class="headerlink" title="测试用例"></a>测试用例</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; nthUglyNumber(<span class="number">10</span>) &lt;&lt; <span class="built_in">endl</span>; <span class="comment">//12</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="剑指-Offer-60-n个骰子的点数"><a href="#剑指-Offer-60-n个骰子的点数" class="headerlink" title="剑指 Offer 60. n个骰子的点数"></a>剑指 Offer 60. n个骰子的点数</h1><p>题目：把n个骰子扔在地上，所有骰子朝上一面的点数之和为s。输入n，打印出s的所有可能的值出现的概率。</p>
+<p>你需要用一个浮点数数组返回答案，其中第 i 个元素代表这 n 个骰子所能掷出的点数集合中第 i 小的那个的概率。</p>
+<h2 id="思路：动态规划-4"><a href="#思路：动态规划-4" class="headerlink" title="思路：动态规划"></a>思路：动态规划</h2><ol>
+<li>n个骰子，朝上的面点数之和s范围是[n,6n]，因此返回数组长度为6n-n+1</li>
+<li>根据概率知识，结果s出现的概率表示为 s出现的次数/6^n</li>
+<li>动态转移方程 dp[n][s] = dp[n-1][s-k] k属于[1,6]<br> 举例：投3个骰子得到7的概率，可以表示为投2个骰子得到2，3，4，5，6的概率</li>
+</ol>
+<h3 id="show-me-code-10"><a href="#show-me-code-10" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">double</span>&gt; <span class="title">dicesProbability</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">double</span>&gt; <span class="title">res</span><span class="params">(n * <span class="number">6</span> - n + <span class="number">1</span>)</span></span>;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; dp(n + <span class="number">1</span>, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;(<span class="number">6</span> * n + <span class="number">1</span>, <span class="number">0</span>)); <span class="comment">// 将全部值初始化为 0</span></span><br><span class="line">    <span class="keyword">int</span> row = n + <span class="number">1</span>, col = <span class="number">6</span> * n + <span class="number">1</span>;                         <span class="comment">//col ==&gt; [0,6n] 共6n+1列</span></span><br><span class="line">    <span class="comment">// 初始化第一个骰子</span></span><br><span class="line">    <span class="comment">// dp[1][1]=1 代表一个骰子点数和为 1 的情况有一种</span></span><br><span class="line">    <span class="comment">// dp[1][2]=1 代表一个骰子点数和为 2 的情况有一种</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">6</span>; i++)</span><br><span class="line">        dp[<span class="number">1</span>][i] = <span class="number">1</span>; <span class="comment">//因为只有一个骰子时，点数和为1,2,3,4,5,6的情况都各只有一种</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>; i &lt; row; i++)</span><br><span class="line">    &#123; <span class="comment">//从2颗骰子开始计算</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = i; j &lt; col; j++)</span><br><span class="line">        &#123; <span class="comment">//j就是点数之和s,是从i开始的，代表i个骰子点数之和的最小值为i</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">1</span>; k &lt;= <span class="number">6</span>; k++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">//dp[i][j]表示 i个骰子点数之和为j的数量有多少？</span></span><br><span class="line">                <span class="comment">//答：当第i个骰子点数为k时，那么前i-1个骰子点数和必须等于j-k，则k+(j-k)=j;</span></span><br><span class="line">                <span class="comment">//把所有dp[i-1][j-k]的数量加起来(k∈[1,6])，就等于dp[i][j]的数量了</span></span><br><span class="line">                <span class="keyword">if</span> (j - k &gt; <span class="number">0</span>)</span><br><span class="line">                    dp[i][j] += dp[i - <span class="number">1</span>][j - k];</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">double</span> denominator = <span class="built_in">pow</span>(<span class="number">6.0</span>, n); <span class="comment">// 分母</span></span><br><span class="line">    <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = n; k &lt;= <span class="number">6</span> * n; k++)</span><br><span class="line">        <span class="comment">//计算概率 放入答案</span></span><br><span class="line">        res[index++] = dp[n][k] / denominator; <span class="comment">//n个骰子，共可以产生6^n种</span></span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="测试用例-7"><a href="#测试用例-7" class="headerlink" title="测试用例"></a>测试用例</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">double</span>&gt; res = dicesProbability(<span class="number">2</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> i : res)</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; i &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="剑指Offer63：股票的最大利润"><a href="#剑指Offer63：股票的最大利润" class="headerlink" title="剑指Offer63：股票的最大利润"></a>剑指Offer63：股票的最大利润</h1><p>题目：假设把某股票的价格按照时间先后顺序存储在数组中，请问买卖交易该股票可能获得的利润是多少？</p>
+<h2 id="思路1：贪心"><a href="#思路1：贪心" class="headerlink" title="思路1：贪心"></a>思路1：贪心</h2><p>股票的奥义:最低点买入，最高点卖出<br>一轮遍历，每次更新最低值和收益</p>
+<h3 id="show-me-code-11"><a href="#show-me-code-11" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;prices)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 没有卖出的可能</span></span><br><span class="line">    <span class="keyword">if</span> (prices.size() &lt; <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> minPrice = prices[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">int</span> profit = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i : prices)</span><br><span class="line">    &#123;</span><br><span class="line">        minPrice = min(minPrice, i);</span><br><span class="line">        profit = max(profit, i - minPrice);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> profit;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<h2 id="思路2：动态规划"><a href="#思路2：动态规划" class="headerlink" title="思路2：动态规划"></a>思路2：动态规划</h2><ol>
+<li>dp[i]表示第i天的最大利润</li>
+<li>初始化dp[o] = 0</li>
+<li>状态转移 dp[i] = max(dp[i-1] , price[i] - minPrice[0:i-1])<br>第i天的最大收益 = 第i-1天的最大收益 以及 [1:i-1]天中最低价买入，当天卖出 这两种情况中较大的值  </li>
+<li>对比思路1，状态转移中dp[i]只和dp[i-1]相关，因此可以用一个变量profit表示，这样就和思路1一样的形式了 </li>
+</ol>
+<h3 id="show-me-code-12"><a href="#show-me-code-12" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">maxProfit</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &amp;prices)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> day = prices.size();</span><br><span class="line">    <span class="keyword">if</span> (day &lt; <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">dp</span><span class="params">(day, <span class="number">0</span>)</span></span>;</span><br><span class="line">    <span class="keyword">int</span> minPrice = prices[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; day; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        dp[i] = max(dp[i - <span class="number">1</span>], prices[i] - minPrice);</span><br><span class="line">        minPrice = min(minPrice, prices[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dp[day - <span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="测试用例-8"><a href="#测试用例-8" class="headerlink" title="测试用例"></a>测试用例</h2><pre><code class="c++">int main()
+&#123;
+    vector&lt;int&gt; prices1 = &#123;7, 1, 5, 3, 6, 4&#125;;
+    cout &lt;&lt; maxProfit(prices1) &lt;&lt; endl; // 5
+    vector&lt;int&gt; prices2 = &#123;7, 6, 4, 3, 1&#125;;
+    cout &lt;&lt; maxProfit(prices2) &lt;&lt; endl; // 0
+&#125;</code></pre>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>(·.·)谢谢老板送的火箭(·.·)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/uploads/lx-wechat.jpg" alt="Sean Lee 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/uploads/lx-alipay.jpg" alt="Sean Lee 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Sean Lee
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://seanleecn.github.io/2020/08/21/%E5%89%91%E6%8C%87Offer%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" title="剑指Offer刷题日记-动态规划">https://seanleecn.github.io/2020/08/21/剑指Offer刷题日记-动态规划/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%89%91%E6%8C%87Offer/" rel="tag"><i class="fa fa-tag"></i> 剑指Offer</a>
+              <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" rel="tag"><i class="fa fa-tag"></i> 动态规划</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/08/20/%E5%89%91%E6%8C%87Offer%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0-%E9%93%BE%E8%A1%A8/" rel="prev" title="剑指Offer刷题日记-链表">
+                  <i class="fa fa-chevron-left"></i> 剑指Offer刷题日记-链表
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/08/23/%E5%89%91%E6%8C%87Offer%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0-%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="next" title="剑指Offer刷题日记-位运算">
+                  剑指Offer刷题日记-位运算 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sean Lee</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

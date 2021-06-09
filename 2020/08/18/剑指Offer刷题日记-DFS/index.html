@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/uploads/apple-touch-icon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon.png">
+  <link rel="mask-icon" href="/uploads/favicon.png" color="#222">
+  <meta name="google-site-verification" content="BMs_JXcFpPIC8YPHZk1ZxmbaZaMS_Gfpf5R2FHhk9tU">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.loli.net/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic%7CRoboto+Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"seanleecn.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+<meta name="description" content="记录剑指Offer中DFS相关的题目思路及解答。 文章会给出思路和代码，同时为了方便本地调试，还会提供相应的测试用例。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="剑指Offer刷题日记-DFS">
+<meta property="og:url" content="https://seanleecn.github.io/2020/08/18/%E5%89%91%E6%8C%87Offer%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0-DFS/index.html">
+<meta property="og:site_name" content="Sean&#39;s blog">
+<meta property="og:description" content="记录剑指Offer中DFS相关的题目思路及解答。 文章会给出思路和代码，同时为了方便本地调试，还会提供相应的测试用例。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-18T08:24:33.000Z">
+<meta property="article:modified_time" content="2021-06-09T03:21:55.865Z">
+<meta property="article:author" content="Sean Lee">
+<meta property="article:tag" content="剑指Offer">
+<meta property="article:tag" content="DFS">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://seanleecn.github.io/2020/08/18/%E5%89%91%E6%8C%87Offer%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0-DFS/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>剑指Offer刷题日记-DFS | Sean's blog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Sean's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">This is part of my life.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87Offer12%EF%BC%9A%E7%9F%A9%E9%98%B5%E4%B8%AD%E7%9A%84%E8%B7%AF%E5%BE%84"><span class="nav-number">1.</span> <span class="nav-text">剑指Offer12：矩阵中的路径</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF-DFS-%E5%9B%9E%E6%BA%AF%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">思路:DFS+回溯法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code"><span class="nav-number">1.1.1.</span> <span class="nav-text">show me code</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B"><span class="nav-number">1.1.2.</span> <span class="nav-text">测试用例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87Offer13%EF%BC%9A%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%9A%84%E8%BF%90%E5%8A%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">2.</span> <span class="nav-text">剑指Offer13：机器人的运动范围</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF-%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84%E5%8F%8C%E9%87%8D%E5%BE%AA%E7%8E%AF%E9%81%8D%E5%8E%86-DFS"><span class="nav-number">2.1.</span> <span class="nav-text">思路:二维数组双重循环遍历+DFS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-1"><span class="nav-number">2.1.1.</span> <span class="nav-text">show me code</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B-1"><span class="nav-number">2.1.2.</span> <span class="nav-text">测试用例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87Offer29%EF%BC%9A%E9%A1%BA%E6%97%B6%E9%92%88%E6%89%93%E5%8D%B0%E7%9F%A9%E9%98%B5"><span class="nav-number">3.</span> <span class="nav-text">剑指Offer29：顺时针打印矩阵</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF-%E6%8C%89%E5%9C%88%E6%A8%A1%E6%8B%9F"><span class="nav-number">3.1.</span> <span class="nav-text">思路:按圈模拟</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-2"><span class="nav-number">3.1.1.</span> <span class="nav-text">show me code</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B-2"><span class="nav-number">3.1.2.</span> <span class="nav-text">测试用例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%91%E6%8C%87Offer38%EF%BC%9A%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%8E%92%E5%88%97"><span class="nav-number">4.</span> <span class="nav-text">剑指Offer38：字符串的排列</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF-%E5%85%A8%E6%8E%92%E5%88%97%E9%97%AE%E9%A2%98-DFS-%E5%89%AA%E6%9E%9D"><span class="nav-number">4.1.</span> <span class="nav-text">思路:全排列问题+DFS+剪枝</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#show-me-code-3"><span class="nav-number">4.1.1.</span> <span class="nav-text">show me code</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B-3"><span class="nav-number">4.1.2.</span> <span class="nav-text">测试用例</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Sean Lee"
+      src="/uploads/lx-avatar.jpg">
+  <p class="site-author-name" itemprop="name">Sean Lee</p>
+  <div class="site-description" itemprop="description">Coding & Robotics</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/seanleecn" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;seanleecn" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:lix0419@outlook.com" title="E-Mail → mailto:lix0419@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://seanleecn.github.io/2020/08/18/%E5%89%91%E6%8C%87Offer%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0-DFS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/lx-avatar.jpg">
+      <meta itemprop="name" content="Sean Lee">
+      <meta itemprop="description" content="Coding & Robotics">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sean's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          剑指Offer刷题日记-DFS
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-18 16:24:33" itemprop="dateCreated datePublished" datetime="2020-08-18T16:24:33+08:00">2020-08-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-06-09 11:21:55" itemprop="dateModified" datetime="2021-06-09T11:21:55+08:00">2021-06-09</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>记录<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problemset/lcof/">剑指Offer</a>中<code>DFS</code>相关的题目思路及解答。</p>
+<p>文章会给出思路和代码，同时为了方便本地调试，还会提供相应的测试用例。</p>
+<a id="more"></a>
+
+<h1 id="剑指Offer12：矩阵中的路径"><a href="#剑指Offer12：矩阵中的路径" class="headerlink" title="剑指Offer12：矩阵中的路径"></a>剑指Offer12：矩阵中的路径</h1><p>题目：请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。</p>
+<p>路径可以从矩阵中的任意一格开始，每一步可以在矩阵中向左、右、上、下移动一格。</p>
+<p>如果一条路径经过了矩阵的某一格，那么该路径不能再次进入该格子。</p>
+<p>例如，在下面的3×4的矩阵中包含一条字符串“bfce”的路径（路径中的字母用加粗标出）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[[ &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;e&quot; ],</span><br><span class="line"> [ &quot;s&quot;, &quot;f&quot;, &quot;c&quot;, &quot;s&quot; ],</span><br><span class="line"> [ &quot;a&quot;, &quot;d&quot;, &quot;e&quot;, &quot;e&quot; ]]</span><br></pre></td></tr></table></figure>
+<p>但矩阵中不包含字符串“abfb”的路径，因为字符串的第一个字符b占据了矩阵中的第一行第二个格子之后，路径不能再次进入这个格子。</p>
+<h2 id="思路-DFS-回溯法"><a href="#思路-DFS-回溯法" class="headerlink" title="思路:DFS+回溯法"></a>思路:DFS+回溯法</h2><h3 id="show-me-code"><a href="#show-me-code" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义一个偏移数组,用于不同方向的搜索</span></span><br><span class="line"><span class="keyword">int</span> dir[<span class="number">4</span>][<span class="number">2</span>] = &#123;&#123;<span class="number">-1</span>, <span class="number">0</span>&#125;, &#123;<span class="number">1</span>, <span class="number">0</span>&#125;, &#123;<span class="number">0</span>, <span class="number">-1</span>&#125;, &#123;<span class="number">0</span>, <span class="number">1</span>&#125;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">DFS</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j, <span class="keyword">int</span> index, <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">char</span>&gt;&gt; &amp;board, <span class="keyword">const</span> <span class="built_in">string</span> &amp;word, <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;&gt; &amp;visited)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//递归终止条件</span></span><br><span class="line">    <span class="keyword">if</span> (index == word.size() - <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> word[index] == board[i][j];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (word[index] == board[i][j])</span><br><span class="line">    &#123;</span><br><span class="line">        visited[i][j] = <span class="literal">true</span>;</span><br><span class="line">        <span class="comment">// 4个方向都要DFS</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; <span class="number">4</span>; k++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// k:0-&gt;3对应左 右 下 上</span></span><br><span class="line">            <span class="keyword">int</span> new_i = i + dir[k][<span class="number">0</span>];</span><br><span class="line">            <span class="keyword">int</span> new_j = j + dir[k][<span class="number">1</span>];</span><br><span class="line">            <span class="comment">// 探索的方向需要满足以下约束条件:</span></span><br><span class="line">            <span class="comment">// 1.非负;</span></span><br><span class="line">            <span class="comment">// 2.没有越界;</span></span><br><span class="line">            <span class="comment">// 3.没有访问过</span></span><br><span class="line">            <span class="keyword">if</span> (new_i &gt;= <span class="number">0</span> &amp;&amp; new_j &gt;= <span class="number">0</span> &amp;&amp; new_i &lt; board.size() &amp;&amp;</span><br><span class="line">                new_j &lt; board[<span class="number">0</span>].size() &amp;&amp; !visited[new_i][new_j])</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (DFS(new_i, new_j, index + <span class="number">1</span>, board, word, visited))</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        visited[i][j] = <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">exist</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">char</span>&gt;&gt; &amp;board, <span class="built_in">string</span> word)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> row = board.size();</span><br><span class="line">    <span class="keyword">int</span> column = board[<span class="number">0</span>].size();</span><br><span class="line">    <span class="comment">//!!!简介的二维vector初始化的方法!!!</span></span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;&gt; visited(row, <span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;(column));</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; row; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; column; j++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (DFS(i, j, <span class="number">0</span>, board, word, visited))</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="测试用例"><a href="#测试用例" class="headerlink" title="测试用例"></a>测试用例</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **agrv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">char</span>&gt;&gt; mat1 = &#123;&#123;<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>, <span class="string">&#x27;E&#x27;</span>&#125;,</span><br><span class="line">                                 &#123;<span class="string">&#x27;S&#x27;</span>, <span class="string">&#x27;F&#x27;</span>, <span class="string">&#x27;C&#x27;</span>, <span class="string">&#x27;S&#x27;</span>&#125;,</span><br><span class="line">                                 &#123;<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;D&#x27;</span>, <span class="string">&#x27;E&#x27;</span>, <span class="string">&#x27;E&#x27;</span>&#125;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">string</span> word1 = <span class="string">&quot;ABCCED&quot;</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; exist(mat1, word1) &lt;&lt; <span class="built_in">endl</span>; <span class="comment">//期望输出1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="剑指Offer13：机器人的运动范围"><a href="#剑指Offer13：机器人的运动范围" class="headerlink" title="剑指Offer13：机器人的运动范围"></a>剑指Offer13：机器人的运动范围</h1><p>题目：地上有一个m行n列的方格。一个机器人从坐标(0, 0)的格子开始移动，它每一次可以向左、右、上、下移动一格，但不能进入行坐标和列坐标的数位之和大于k的格子。</p>
+<p>例如，当k为18时，机器人能够进入方格(35, 37)，因为3+5+3+7=18。但它不能进入方格(35, 38)，因为3+5+3+8=19。<br>请问该机器人能够到达多少个格子？</p>
+<h2 id="思路-二维数组双重循环遍历-DFS"><a href="#思路-二维数组双重循环遍历-DFS" class="headerlink" title="思路:二维数组双重循环遍历+DFS"></a>思路:二维数组双重循环遍历+DFS</h2><h3 id="show-me-code-1"><a href="#show-me-code-1" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getDigit</span><span class="params">(<span class="keyword">int</span> num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (num &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        sum += num % <span class="number">10</span>; <span class="comment">//个位数</span></span><br><span class="line">        num /= <span class="number">10</span>;       <span class="comment">//十位数</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DFS</span><span class="params">(<span class="keyword">int</span> row, <span class="keyword">int</span> col, <span class="keyword">int</span> m, <span class="keyword">int</span> n, <span class="keyword">int</span> k, <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;&gt; &amp;visited, <span class="keyword">int</span> &amp;count)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 数组越界</span></span><br><span class="line">    <span class="keyword">if</span> (row &lt; <span class="number">0</span> || row &gt;= m || col &lt; <span class="number">0</span> || col &gt;= n)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    <span class="comment">// 坐标的数字和大于k</span></span><br><span class="line">    <span class="keyword">if</span> (getDigit(row) + getDigit(col) &gt; k)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    <span class="comment">// 访问过了</span></span><br><span class="line">    <span class="keyword">if</span> (visited[row][col] == <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    visited[row][col] = <span class="literal">true</span>;</span><br><span class="line">    count++;</span><br><span class="line">    DFS(row + <span class="number">1</span>, col, m, n, k, visited, count); <span class="comment">//向下搜索</span></span><br><span class="line">    DFS(row, col + <span class="number">1</span>, m, n, k, visited, count); <span class="comment">//向右搜索</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">movingCount</span><span class="params">(<span class="keyword">int</span> m, <span class="keyword">int</span> n, <span class="keyword">int</span> k)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//!!!二维数组初始化并定义大小和初值</span></span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;&gt; visited(m, <span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;(n, <span class="literal">false</span>));</span><br><span class="line">    <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">    DFS(<span class="number">0</span>, <span class="number">0</span>, m, n, k, visited, count);</span><br><span class="line">    <span class="keyword">return</span> count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="测试用例-1"><a href="#测试用例-1" class="headerlink" title="测试用例"></a>测试用例</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; movingCount(<span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>) &lt;&lt; <span class="built_in">endl</span>; <span class="comment">//期望输出3</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; movingCount(<span class="number">3</span>, <span class="number">1</span>, <span class="number">0</span>) &lt;&lt; <span class="built_in">endl</span>; <span class="comment">//期望输出1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="剑指Offer29：顺时针打印矩阵"><a href="#剑指Offer29：顺时针打印矩阵" class="headerlink" title="剑指Offer29：顺时针打印矩阵"></a>剑指Offer29：顺时针打印矩阵</h1><p>题目：输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。 </p>
+<h2 id="思路-按圈模拟"><a href="#思路-按圈模拟" class="headerlink" title="思路:按圈模拟"></a>思路:按圈模拟</h2><ol>
+<li><p>一圈有四个顶点(T,L)(T,R)(B,R)(B,L)</p>
+</li>
+<li><p>在一圈中的遍历顺序是:(T,L)-&gt;(T,R)-&gt;(B,R) *重点:判断L&lt;R &amp;&amp; T&lt;B* (B,R)-&gt;(B,L)-&gt;(T,L)</p>
+</li>
+<li><p>判断的作用是防止只剩一行或者一列的时候把这一行(列)重读添加</p>
+</li>
+<li><p>一圈结束后,TandL++,BandR–</p>
+</li>
+<li><p>判断所有圈都打印了:L&lt;=R &amp;&amp; T&lt;=B</p>
+</li>
+</ol>
+<h3 id="show-me-code-2"><a href="#show-me-code-2" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">spiralOrder</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; &amp;matrix)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">    <span class="keyword">if</span> (matrix.size() == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    int T(0), L(0), B(matrix.size() - 1), R(matrix[0].size() - 1); // 顶点坐标</span><br><span class="line">    <span class="comment">// 检测是否打印完了所有圈</span></span><br><span class="line">    <span class="keyword">while</span> (T &lt;= B &amp;&amp; L &lt;= R)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 左到右打印:(T,L)-&gt;(T,R)</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = L; i &lt;= R; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            res.push_back(matrix[T][i]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 从上到下打印:(T,R)-&gt;(B,R)</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = T + <span class="number">1</span>; i &lt;= B; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            res.push_back(matrix[i][R]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 判断是否是单行或者单列</span></span><br><span class="line">        <span class="keyword">if</span> (L &lt; R &amp;&amp; T &lt; B)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 从右到左打印:(B,R)-&gt;(B,L)</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = R - <span class="number">1</span>; i &gt;= L; i--)</span><br><span class="line">            &#123;</span><br><span class="line">                res.push_back(matrix[B][i]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 从下到上打印:(B,L)-&gt;(T,L)</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = B - <span class="number">1</span>; i &gt; T; i--)</span><br><span class="line">            &#123;</span><br><span class="line">                res.push_back(matrix[i][L]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 一圈打印完了,顶点坐标移动</span></span><br><span class="line">        T++;</span><br><span class="line">        L++;</span><br><span class="line">        B--;</span><br><span class="line">        R--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="测试用例-2"><a href="#测试用例-2" class="headerlink" title="测试用例"></a>测试用例</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; mat&#123;&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;,</span><br><span class="line">                            &#123;<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>&#125;,</span><br><span class="line">                            &#123;<span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>&#125;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; out = spiralOrder(mat);</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;输出序列为: &quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; out.size(); i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; out[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="剑指Offer38：字符串的排列"><a href="#剑指Offer38：字符串的排列" class="headerlink" title="剑指Offer38：字符串的排列"></a>剑指Offer38：字符串的排列</h1><p>题目：输入一个字符串，打印出该字符串中字符的所有排列。例如输入字符串abc，<br>则打印出由字符a、b、c所能排列出来的所有字符串abc、acb、bac、bca、cab和cba。</p>
+<h2 id="思路-全排列问题-DFS-剪枝"><a href="#思路-全排列问题-DFS-剪枝" class="headerlink" title="思路:全排列问题+DFS+剪枝"></a>思路:全排列问题+DFS+剪枝</h2><p>第一个数字我们固定一个字符,有n个选择,第二位有n-1个选择…<br>直到只剩下一个选择的时候,把这一个排列push_back到vector中<br>当输入string存在重复的字符时,用set跳过这次选择 </p>
+<h3 id="show-me-code-3"><a href="#show-me-code-3" class="headerlink" title="show me code"></a>show me code</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">int</span> pos, <span class="built_in">string</span> &amp;res_item, <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; &amp;res)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 递归终止条件:pos指针移动到了最后</span></span><br><span class="line">    <span class="keyword">if</span> (pos == res_item.size() - <span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        res.push_back(res_item);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">unordered_set</span>&lt;<span class="keyword">char</span>&gt; uset; <span class="comment">// 每一次递归进入dfs函数,就维护一个set</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = pos; i &lt; res_item.size(); i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 如果set中已经有这个字母了,就跳过这一次循环</span></span><br><span class="line">        <span class="keyword">if</span> (uset.count(res_item[i]))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        uset.insert(res_item[i]);</span><br><span class="line">        <span class="comment">// 最巧妙的一步,# 剑指Offer书上也是这样处理的</span></span><br><span class="line">        <span class="comment">// 通过把i处的元素swap到pos的位置,来固定pos位置的元素(其实相对每次递归而言,pos就是string开头的位置)</span></span><br><span class="line">        swap(res_item[i], res_item[pos]);</span><br><span class="line">        dfs(pos + <span class="number">1</span>, res_item, res);</span><br><span class="line">        <span class="comment">// dfs返回之后,将string还原,不加这一步的话,对于输入abc的案例,输出会成为:</span></span><br><span class="line">        <span class="comment">// 正确输出:abc acb bac bca cba cab -&gt; 错误输出:abc acb cab cba abc acb</span></span><br><span class="line">        <span class="comment">// 即上一次的修改结果会影响到下一次</span></span><br><span class="line">        swap(res_item[i], res_item[pos]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; <span class="title">permutation</span><span class="params">(<span class="built_in">string</span> s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s == <span class="string">&quot;&quot;</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; res;</span><br><span class="line">    <span class="built_in">string</span> res_item = s; <span class="comment">// 不修改传入参数</span></span><br><span class="line">    dfs(<span class="number">0</span>, res_item, res);</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="测试用例-3"><a href="#测试用例-3" class="headerlink" title="测试用例"></a>测试用例</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">string</span> s = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">    <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; res = permutation(s);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; res.size(); i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; res[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="comment">// [&quot;abc&quot;,&quot;acb&quot;,&quot;bac&quot;,&quot;bca&quot;,&quot;cab&quot;,&quot;cba&quot;]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>(·.·)谢谢老板送的火箭(·.·)</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/uploads/lx-wechat.jpg" alt="Sean Lee 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/uploads/lx-alipay.jpg" alt="Sean Lee 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Sean Lee
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://seanleecn.github.io/2020/08/18/%E5%89%91%E6%8C%87Offer%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0-DFS/" title="剑指Offer刷题日记-DFS">https://seanleecn.github.io/2020/08/18/剑指Offer刷题日记-DFS/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%89%91%E6%8C%87Offer/" rel="tag"><i class="fa fa-tag"></i> 剑指Offer</a>
+              <a href="/tags/DFS/" rel="tag"><i class="fa fa-tag"></i> DFS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/08/18/%E5%89%91%E6%8C%87Offer%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0-%E5%AE%9E%E7%8E%B0%E5%BA%93%E5%87%BD%E6%95%B0/" rel="prev" title="剑指Offer刷题日记-实现库函数">
+                  <i class="fa fa-chevron-left"></i> 剑指Offer刷题日记-实现库函数
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/08/19/%E5%89%91%E6%8C%87Offer%E5%88%B7%E9%A2%98%E6%97%A5%E8%AE%B0-%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97/" rel="next" title="剑指Offer刷题日记-栈和队列">
+                  剑指Offer刷题日记-栈和队列 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sean Lee</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
